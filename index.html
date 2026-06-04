@@ -1067,6 +1067,43 @@ body{font-size:17px;}
 .mx-slider-wrap{display:flex;align-items:center;gap:12px;}
 .mx-slider-wrap .rng{flex:1;}
 .mx-slider-val{font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;color:var(--copper-pale);flex-shrink:0;min-width:38px;text-align:right;}
+/* ── "DO THESE NUMBERS SEEM OFF?" PROMPT ── */
+.numbers-off-prompt{display:none;text-align:center;padding:14px 0 4px;}
+.numbers-off-btn{background:none;border:none;font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.38);cursor:pointer;letter-spacing:0.03em;padding:8px 0;transition:color 0.18s;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,0.18);}
+.numbers-off-btn:hover{color:var(--copper-pale);text-decoration-color:var(--copper);}
+/* ── SHARE / PRINT BUTTON ── */
+.share-btn-wrap{padding:18px 38px 4px;display:none;}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;background:transparent;border:1px solid rgba(200,169,110,0.35);color:rgba(255,255,255,0.65);font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:all 0.18s;}
+.share-btn:hover{border-color:var(--copper);color:var(--copper-pale);}
+.share-instructions{font-family:'Barlow',sans-serif;font-size:12px;color:rgba(255,255,255,0.32);line-height:1.6;margin-top:10px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);}
+@media(max-width:560px){.share-btn-wrap{padding:18px 22px 4px;}}
+/* ── PRINT STYLESHEET ── */
+@media print{
+  body{background:#fff!important;padding:0!important;color:#000!important;}
+  .lang-bar,.calc-head,.c-wrap,.result-narrative,.txt-cta,.ledger,.fac-close,
+  .calc-body,.share-btn-wrap,.numbers-off-prompt,.cta,.calc-foot,
+  .result-narrative,.rn-inner,.assumptions-accordion,.streams,.method{display:none!important;}
+  .calc{box-shadow:none!important;border:none!important;max-width:100%!important;animation:none!important;}
+  .result.gated{display:block!important;}
+  .result-box{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;animation:none!important;padding:20px!important;}
+  .result-num{color:#000!important;text-shadow:none!important;font-size:48px!important;}
+  .result-to{color:#555!important;}
+  .result-pcts{color:#333!important;}
+  .cum-row{background:#ccc!important;border:1px solid #ccc!important;}
+  .cum-cell{background:#fff!important;border:1px solid #eee!important;}
+  .cum-cell .cum-val{color:#000!important;}
+  .cum-cell .cum-lab{color:#555!important;}
+  .cum-rate-note{color:#888!important;}
+  .result-preamble{color:#333!important;}
+  .mx-peso-line{color:#555!important;}
+  /* Print header */
+  .print-header{display:block!important;}
+  .print-footer{display:block!important;}
+}
+.print-header{display:none;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #C8A96E;}
+.print-header-title{font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#1F4E79;margin-bottom:4px;}
+.print-header-sub{font-family:'Barlow',sans-serif;font-size:13px;color:#666;}
+.print-footer{display:none;margin-top:24px;padding-top:14px;border-top:1px solid #ccc;font-family:'Barlow',sans-serif;font-size:11px;color:#888;line-height:1.6;}
 /* ── MX DUAL CURRENCY DISPLAY ── */
 .mx-peso-line{font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.45);margin-top:4px;letter-spacing:0.02em;}
 /* ─────────────────────────────────────────────────────────────────────── */
@@ -1287,6 +1324,11 @@ body{font-size:17px;}
   </div>
 
 <div class="result gated" id="result-block">
+  <!-- Print-only header -->
+  <div class="print-header" id="print-header">
+    <div class="print-header-title">Energy Plus — Savings Estimate</div>
+    <div class="print-header-sub" id="print-header-sub">Independent Energy Solutions Partner &nbsp;|&nbsp; yourenergyplus.com &nbsp;|&nbsp; (864) 777-0688</div>
+  </div>
   <div class="result-box">
     <div class="result-preamble" id="result-preamble"></div>
     <div class="result-inner">
@@ -1303,6 +1345,14 @@ body{font-size:17px;}
       </div>
       <div class="cum-rate-note" id="cum-rate-note"></div>
     </div>
+  </div>
+  <!-- Numbers seem off prompt -->
+  <div class="numbers-off-prompt" id="numbers-off-prompt">
+    <button class="numbers-off-btn" id="t-numbers-off" onclick="openAdjustPanel()">Do these numbers seem off? Adjust the assumptions.</button>
+  </div>
+  <!-- Print-only footer -->
+  <div class="print-footer" id="print-footer">
+    <div id="print-footer-text">This estimate is built from DOE consumption data and the inputs you provided. It represents a conservative defensible range, not a projection of peak performance. Actual verified savings depend on a site assessment. Energy Plus is a vendor-neutral Independent Energy Solutions Partner. &nbsp;|&nbsp; yourenergyplus.com</div>
   </div>
 </div>
 <div class="result-narrative" id="result-narrative" style="display:none">
@@ -1373,7 +1423,18 @@ body{font-size:17px;}
   </div>
 </div>
 
-
+<!-- Share / Print button -->
+<div class="share-btn-wrap gated" id="share-btn-wrap">
+  <button class="share-btn" id="t-share-btn" onclick="sharePrint()">
+    <span>&#128247;</span> <span id="t-share-btn-text">Save or Print Your Results</span>
+  </button>
+  <div class="share-instructions" id="t-share-instructions">
+    <strong>Desktop:</strong> Opens print dialog — choose "Save as PDF" to download. &nbsp;
+    <strong>Android:</strong> Tap Print → Save as PDF. &nbsp;
+    <strong>iPhone:</strong> Tap the share icon → Print → pinch-zoom the preview to save as PDF. &nbsp;
+    <strong>In-app browser (Instagram, LinkedIn):</strong> Open in Safari or Chrome first for best results.
+  </div>
+</div>
 
   <div class="txt-cta gated" id="txt-cta-top">
     <a href="#" class="txt-cta-btn" id="sms-link-top">
@@ -2409,6 +2470,9 @@ var STRINGS = {
     perMonth: "/ month",
     sqFt: "sq ft",
     yr: "/ yr",
+    numbersOff: "Do these numbers seem off? Adjust the assumptions.",
+    shareBtn: "Save or Print Your Results",
+    shareInstructions: "Desktop: Opens print dialog — choose \"Save as PDF\" to download.  Android: Tap Print → Save as PDF.  iPhone: Tap the share icon → Print → pinch-zoom the preview to save as PDF.  In-app browser (Instagram, LinkedIn): Open in Safari or Chrome first for best results.",
     dedResult: function(d,t){ return "Up to <span class=\"ded-num\" id=\"ded-amount\">"+d+"</span> in deductions. About <span class=\"ded-num\" id=\"ded-tax\">"+t+"</span> in real tax at 21%."; },
     dedConsult: function(d,t){ return "Up to <strong>"+d+"</strong> in deductions, about <strong>"+t+"</strong> in real tax savings at 21%."; },
     // Stream section labels
@@ -2555,6 +2619,9 @@ var STRINGS = {
     perMonth: "/ mes",
     sqFt: "m² / pie²",
     yr: "/ año",
+    numbersOff: "¿Estos números no le parecen correctos? Ajuste los supuestos.",
+    shareBtn: "Guardar o Imprimir Sus Resultados",
+    shareInstructions: "Escritorio: Abre el diálogo de impresión — elija \"Guardar como PDF\".  Android: Toque Imprimir → Guardar como PDF.  iPhone: Toque compartir → Imprimir → pellizque la vista previa para guardar como PDF.  Navegador integrado (Instagram, LinkedIn): Abra en Safari o Chrome primero.",
     dedResult: function(d,t){ return "Hasta <span class=\"ded-num\" id=\"ded-amount\">"+d+"</span> en deducciones. Aproximadamente <span class=\"ded-num\" id=\"ded-tax\">"+t+"</span> en ahorro fiscal real al 21%."; },
     dedConsult: function(d,t){ return "Hasta <strong>"+d+"</strong> en deducciones, aproximadamente <strong>"+t+"</strong> en ahorro fiscal real al 21%."; },
     // Facility nouns in Spanish (for typewriter headline and result preamble)
@@ -2699,6 +2766,11 @@ function applyStrings(){
   // Units
   var py=document.getElementById("t-per-year"); if(py) py.textContent=S.perYear||"per year";
   var sf=document.getElementById("t-sqft-suf"); if(sf) sf.textContent=S.sqFt||"sq ft";
+  var no=document.getElementById("t-numbers-off"); if(no) no.textContent=S.numbersOff||"Do these numbers seem off? Adjust the assumptions.";
+  var sb=document.getElementById("t-share-btn-text"); if(sb) sb.textContent=S.shareBtn||"Save or Print Your Results";
+  var si=document.getElementById("t-share-instructions"); if(si&&S.shareInstructions){
+    si.innerHTML="<strong>"+(state.lang==="es"?"Escritorio":"Desktop")+":</strong> "+S.shareInstructions.split("  ").map(function(p,i){ return i===0?p:"<strong>"+p.split(":")[0]+":</strong>"+p.split(":").slice(1).join(":"); }).join(" &nbsp; ");
+  }
   // Update s2 ask copy based on country context
   var askEl=document.getElementById("t-s2-ask");
   if(askEl) askEl.textContent=isMX()?(S.s2AskMx||S.s2Ask):S.s2Ask;
@@ -3039,6 +3111,34 @@ function createSparks(){
 }
 /* ─────────────────────────────────────────────────────────────────────── */
 function toggleAdjust(){ document.getElementById("adjust").classList.toggle("open"); }
+function openAdjustPanel(){
+  // Scroll to assumptions accordion and open it
+  var aa=document.getElementById("assumptions-accordion");
+  if(!aa) return;
+  if(!aa.classList.contains("assumptions-open")){
+    toggleAssumptions();
+  }
+  setTimeout(function(){
+    aa.scrollIntoView({behavior:"smooth", block:"start"});
+  }, 60);
+}
+
+function sharePrint(){
+  // Update print header with current facility and spend
+  var SL=STRINGS[state.lang]||STRINGS.en;
+  var facLabel=state.selected&&SL.facLabels&&SL.facLabels[state.selected]?SL.facLabels[state.selected]:(state.selected&&INSIGHTS[state.selected]?INSIGHTS[state.selected].label:"");
+  var spendStr=state.spend>0?fmtFull(state.spend)+" "+(SL.yr||"/ yr"):"";
+  var locStr=isMX()?state.mxRegion:((document.getElementById("state-select")||{}).value||"");
+  var sub=document.getElementById("print-header-sub");
+  if(sub){
+    var parts=["yourenergyplus.com","(864) 777-0688"];
+    if(facLabel) parts.unshift(facLabel);
+    if(spendStr) parts.splice(1,0,spendStr);
+    if(locStr) parts.splice(facLabel?2:1,0,locStr);
+    sub.textContent=parts.join("  |  ");
+  }
+  window.print();
+}
 function toggleAssumptions(){
   var aa=document.getElementById("assumptions-accordion");
   var open=aa.classList.toggle("assumptions-open");
@@ -3190,6 +3290,15 @@ function showResult(){
           rnEl.style.animation="resultReveal 0.55s cubic-bezier(0.22,1,0.36,1) both";
         }
       }, 580);
+
+      // Show numbers-off prompt and share button after everything settles
+      setTimeout(function(){
+        var nop=document.getElementById("numbers-off-prompt");
+        if(nop) nop.style.display="block";
+        var sbw=document.getElementById("share-btn-wrap");
+        if(sbw) sbw.style.display="block";
+      }, 1400);
+
     }, 500);
 
   }, twDuration);
