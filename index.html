@@ -1034,6 +1034,19 @@ body{font-size:17px;}
 .lang-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;padding:6px 14px;background:transparent;border:none;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.18s;line-height:1;}
 .lang-btn.active{background:var(--copper);color:#fff;}
 .lang-btn:hover:not(.active){color:rgba(255,255,255,0.82);}
+/* ── STAGE 0 HERO ── */
+.s0-title{font-family:'Playfair Display',serif;font-weight:800;font-size:clamp(26px,5vw,38px);line-height:1.1;letter-spacing:-0.02em;color:#fff;margin-bottom:10px;}
+.s0-title em{font-style:italic;color:var(--copper-pale);}
+.s0-hook{font-size:clamp(17px,2.4vw,20px);color:rgba(255,255,255,0.78);line-height:1.65;margin-bottom:22px;font-family:'Barlow',sans-serif;}
+.s0-guarantee{display:flex;align-items:flex-start;gap:12px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.28);border-left:3px solid var(--copper);padding:16px 18px;margin-bottom:26px;}
+.s0-guarantee-ico{font-size:20px;flex-shrink:0;line-height:1.3;}
+.s0-guarantee-text{font-family:'Barlow',sans-serif;font-size:clamp(15px,2.2vw,17px);color:rgba(255,255,255,0.88);line-height:1.6;}
+.s0-proof{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;padding-bottom:22px;border-bottom:1px solid rgba(200,169,110,0.18);}
+.s0-proof-item{display:flex;align-items:baseline;gap:10px;}
+.s0-proof-num{font-family:'Barlow',sans-serif;font-size:clamp(22px,3.5vw,28px);font-weight:700;color:var(--copper-pale);flex-shrink:0;line-height:1;font-variant-numeric:tabular-nums;}
+.s0-proof-desc{font-size:clamp(14px,2vw,16px);color:rgba(255,255,255,0.62);line-height:1.4;font-family:'Barlow',sans-serif;}
+.s0-proof-name{font-weight:700;color:rgba(255,255,255,0.88);}
+.s0-transition{font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.48);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:12px;}
 /* ── COUNTRY SELECTOR ── */
 .country-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
 .country-opt{border:1px solid rgba(200,169,110,0.22);background:rgba(200,169,110,0.045);padding:22px 16px;cursor:pointer;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
@@ -1085,9 +1098,18 @@ body{font-size:17px;}
 
     <!-- Stage 0: Country selector -->
     <div id="c-s0">
-      <p class="c-doe" id="t-s0-doe">Our savings estimator is calibrated to your country's electricity market, utility structure, and regulatory environment. Choose where your facility is located.</p>
-      <div class="c-progress"><span class="c-progress-step active"></span><span class="c-progress-step"></span><span class="c-progress-step"></span><span class="c-progress-step"></span><span class="c-progress-label">1 / 4</span></div>
-      <div class="c-choose-label" id="t-choose-country">Choose your country</div>
+      <h2 class="s0-title" id="t-s0-title"><em>Slash Your Energy Cost</em></h2>
+      <p class="s0-hook" id="t-s0-hook">Most commercial operators are overpaying on their electric bill. Almost none of them know by how much. This tells you.</p>
+      <div class="s0-guarantee">
+        <span class="s0-guarantee-ico">&#9889;</span>
+        <span class="s0-guarantee-text" id="t-s0-guarantee">If this calculator can't find you savings in under two minutes, we'll pay our engineer to find them for you.</span>
+      </div>
+      <div class="s0-proof">
+        <div class="s0-proof-item"><span class="s0-proof-num">49%</span><span class="s0-proof-desc">energy savings — <strong class="s0-proof-name">Arizona Ford Dealership</strong></span></div>
+        <div class="s0-proof-item"><span class="s0-proof-num">$180K/yr</span><span class="s0-proof-desc">independently verified — <strong class="s0-proof-name">Edward Hospital, Illinois</strong></span></div>
+        <div class="s0-proof-item"><span class="s0-proof-num">33%</span><span class="s0-proof-desc">energy savings — <strong class="s0-proof-name">Midwest Bottling Facility</strong></span></div>
+      </div>
+      <div class="s0-transition" id="t-s0-transition">Where is your facility located?</div>
       <div class="country-grid" id="country-grid">
         <div class="country-opt" data-country="us" onclick="selectCountry('us')">
           <svg class="fac-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="9" x2="23" y2="9"/><line x1="1" y1="14" x2="23" y2="14"/><line x1="8" y1="4" x2="8" y2="20"/></svg>
@@ -2269,6 +2291,10 @@ function isPuertoRico(stateName){ return stateName==="Puerto Rico"; }
 var STRINGS = {
   en: {
     eyebrow: "Your Energy Saver",
+    s0Title: "Slash Your Energy Cost",
+    s0Hook: "Most commercial operators are overpaying on their electric bill. Almost none of them know by how much. This tells you.",
+    s0Guarantee: "If this calculator can't find you savings in under two minutes, we'll pay our engineer to find them for you.",
+    s0Transition: "Where is your facility located?",
     s0Doe: "Our savings estimator is calibrated to your country's electricity market, utility structure, and regulatory environment. Choose where your facility is located.",
     chooseCountry: "Choose your country",
     usName: "United States",
@@ -2400,6 +2426,10 @@ var STRINGS = {
   },
   es: {
     eyebrow: "Su Ahorrador de Energía",
+    s0Title: "Reduzca Su Costo de Energía",
+    s0Hook: "La mayoría de los operadores comerciales están pagando de más en su factura eléctrica. Casi ninguno sabe cuánto. Esto se lo dice.",
+    s0Guarantee: "Si esta calculadora no puede encontrarle ahorros en menos de dos minutos, pagaremos a nuestro ingeniero para encontrarlos por usted.",
+    s0Transition: "¿Dónde se encuentra su instalación?",
     s0Doe: "Nuestro estimador está calibrado al mercado eléctrico, estructura tarifaria y entorno regulatorio de su país. Elija dónde se encuentra su instalación.",
     chooseCountry: "Elija su país",
     usName: "Estados Unidos",
@@ -2580,6 +2610,11 @@ function applyStrings(){
   var S=STRINGS[state.lang]||STRINGS.en;
   // Header
   var ey=document.getElementById("calc-eyebrow"); if(ey) ey.textContent=S.eyebrow;
+  // Stage 0 hero
+  var s0t=document.getElementById("t-s0-title"); if(s0t) s0t.innerHTML="<em>"+S.s0Title+"</em>";
+  var s0h=document.getElementById("t-s0-hook"); if(s0h) s0h.textContent=S.s0Hook;
+  var s0g=document.getElementById("t-s0-guarantee"); if(s0g) s0g.textContent=S.s0Guarantee;
+  var s0tr=document.getElementById("t-s0-transition"); if(s0tr) s0tr.textContent=S.s0Transition;
   // Stage 0
   var s0d=document.getElementById("t-s0-doe"); if(s0d) s0d.innerHTML=S.s0Doe;
   var cc=document.getElementById("t-choose-country"); if(cc) cc.textContent=S.chooseCountry;
@@ -2844,6 +2879,12 @@ function setMxHeat(active){
 }
 
 function updateNegoStream(stateName){
+  // Mexico: always hide — CFE is sole supplier, no deregulated market
+  if(isMX()){
+    state.tNego=false;
+    var ns=document.getElementById("ss-nego"); if(ns) ns.style.display="none";
+    return;
+  }
   var isPR=isPuertoRico(stateName);
   var isDereg=!!(DEREG_STATES&&DEREG_STATES[stateName]);
   // Puerto Rico: hide nego entirely — fully regulated, no deregulated option, no tariff negotiation framing applies
