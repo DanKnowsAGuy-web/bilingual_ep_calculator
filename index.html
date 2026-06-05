@@ -1034,6 +1034,17 @@ body{font-size:17px;}
 .lang-btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;padding:6px 14px;background:transparent;border:none;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.18s;line-height:1;}
 .lang-btn.active{background:var(--copper);color:#fff;}
 .lang-btn:hover:not(.active){color:rgba(255,255,255,0.82);}
+/* ── GUARANTEE TOOLTIP ── */
+.guarantee-wrap{position:relative;display:inline;}
+.guarantee-asterisk{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(200,169,110,0.25);border:1px solid rgba(200,169,110,0.45);color:var(--copper-pale);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;cursor:pointer;margin-left:5px;vertical-align:middle;line-height:1;flex-shrink:0;transition:background 0.18s;}
+.guarantee-asterisk:hover{background:rgba(200,169,110,0.45);}
+.guarantee-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(8,11,13,0.97);border:1px solid rgba(200,169,110,0.35);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:12px;color:rgba(255,255,255,0.72);line-height:1.6;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.18s;z-index:200;}
+.guarantee-tooltip.visible{opacity:1;pointer-events:auto;}
+.guarantee-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:rgba(200,169,110,0.35);}
+@media(max-width:560px){
+  .guarantee-tooltip{white-space:normal;width:240px;left:auto;right:-8px;transform:none;}
+  .guarantee-tooltip::after{left:auto;right:16px;transform:none;}
+}
 /* ── STAGE 0 HERO ── */
 .s0-title{font-family:'Playfair Display',serif;font-weight:800;font-size:clamp(26px,5vw,38px);line-height:1.1;letter-spacing:-0.02em;color:#fff;margin-bottom:10px;}
 .s0-title em{font-style:italic;color:var(--copper-pale);}
@@ -1102,7 +1113,7 @@ body{font-size:17px;}
       <p class="s0-hook" id="t-s0-hook">Most commercial operators are overpaying on their electric bill. Almost none of them know by how much. This tells you.</p>
       <div class="s0-guarantee">
         <span class="s0-guarantee-ico">&#9889;</span>
-        <span class="s0-guarantee-text" id="t-s0-guarantee">If this calculator can't find you savings in under two minutes, we'll pay our engineer to find them for you.</span>
+        <span class="s0-guarantee-text" id="t-s0-guarantee">If this calculator can't find you savings in under two minutes, we'll pay our engineer to find them for you.<span class="guarantee-wrap"><button class="guarantee-asterisk" onclick="toggleGuaranteeTooltip(event)" aria-label="Guarantee terms">*</button><span class="guarantee-tooltip" id="guarantee-tooltip" id="t-guarantee-tooltip">Valid for commercial facilities. $2,000+/month spend. New inquiries only. One per facility. Engineer fee capped at $150.</span></span></span>
       </div>
       <div class="s0-proof">
         <div class="s0-proof-item"><span class="s0-proof-num">49%</span><span class="s0-proof-desc">energy savings — <strong class="s0-proof-name">Arizona Ford Dealership</strong></span></div>
@@ -2294,6 +2305,7 @@ var STRINGS = {
     s0Title: "Slash Your Energy Cost",
     s0Hook: "Most commercial operators are overpaying on their electric bill. Almost none of them know by how much. This tells you.",
     s0Guarantee: "If this calculator can't find you savings in under two minutes, we'll pay our engineer to find them for you.",
+    s0GuaranteeTooltip: "Valid for commercial facilities. $2,000+/month spend. New inquiries only. One per facility. Engineer fee capped at $150.",
     s0Transition: "Where is your facility located?",
     s0Doe: "Our savings estimator is calibrated to your country's electricity market, utility structure, and regulatory environment. Choose where your facility is located.",
     chooseCountry: "Choose your country",
@@ -2429,6 +2441,7 @@ var STRINGS = {
     s0Title: "Reduzca Su Costo de Energía",
     s0Hook: "La mayoría de los operadores comerciales están pagando de más en su factura eléctrica. Casi ninguno sabe cuánto. Esto se lo dice.",
     s0Guarantee: "Si esta calculadora no puede encontrarle ahorros en menos de dos minutos, pagaremos a nuestro ingeniero para encontrarlos por usted.",
+    s0GuaranteeTooltip: "Válido para instalaciones comerciales. Gasto de $2,000+/mes. Solo nuevas consultas. Una por instalación. Honorario del ingeniero limitado a $150.",
     s0Transition: "¿Dónde se encuentra su instalación?",
     s0Doe: "Nuestro estimador está calibrado al mercado eléctrico, estructura tarifaria y entorno regulatorio de su país. Elija dónde se encuentra su instalación.",
     chooseCountry: "Elija su país",
@@ -2613,7 +2626,8 @@ function applyStrings(){
   // Stage 0 hero
   var s0t=document.getElementById("t-s0-title"); if(s0t) s0t.innerHTML="<em>"+S.s0Title+"</em>";
   var s0h=document.getElementById("t-s0-hook"); if(s0h) s0h.textContent=S.s0Hook;
-  var s0g=document.getElementById("t-s0-guarantee"); if(s0g) s0g.textContent=S.s0Guarantee;
+  var s0g=document.getElementById("t-s0-guarantee"); if(s0g){ var ast=s0g.querySelector(".guarantee-wrap"); s0g.childNodes[0].textContent=S.s0Guarantee+" "; if(ast) ast.style.display="inline"; }
+  var s0tt=document.getElementById("guarantee-tooltip"); if(s0tt) s0tt.textContent=S.s0GuaranteeTooltip||"Valid for commercial facilities. $2,000+/month spend. New inquiries only. One per facility. Engineer fee capped at $150.";
   var s0tr=document.getElementById("t-s0-transition"); if(s0tr) s0tr.textContent=S.s0Transition;
   // Stage 0
   var s0d=document.getElementById("t-s0-doe"); if(s0d) s0d.innerHTML=S.s0Doe;
@@ -3038,6 +3052,21 @@ function createSparks(){
   }
 }
 /* ─────────────────────────────────────────────────────────────────────── */
+function toggleGuaranteeTooltip(e){
+  e.stopPropagation();
+  var tt=document.getElementById("guarantee-tooltip");
+  if(!tt) return;
+  var isVisible=tt.classList.contains("visible");
+  tt.classList.toggle("visible",!isVisible);
+  if(!isVisible){
+    setTimeout(function(){
+      document.addEventListener("click",function dismiss(){
+        tt.classList.remove("visible");
+        document.removeEventListener("click",dismiss);
+      });
+    },0);
+  }
+}
 function toggleAdjust(){ document.getElementById("adjust").classList.toggle("open"); }
 function toggleAssumptions(){
   var aa=document.getElementById("assumptions-accordion");
