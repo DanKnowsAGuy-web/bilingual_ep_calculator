@@ -2808,20 +2808,48 @@ var STRINGS = {
     },
     // Equipment names in Spanish (for result preamble culprits list)
     equipNames: {
-      "rooftop units":"unidades de techo","compressor racks":"racks de compresores",
-      "refrigeration motors":"motores de refrigeración","HVAC units":"unidades HVAC",
-      "chillers":"enfriadores","elevators":"elevadores","boiler":"caldera",
-      "water pumps":"bombas de agua","imaging equipment":"equipo de imagen",
-      "LED drivers":"drivers LED","VFDs":"variadores de frecuencia",
-      "motor drives":"variadores de motor","lighting controls":"controles de iluminación",
-      "cardio equipment":"equipo cardiovascular","treadmill drives":"variadores de caminadora",
-      "reach-in coolers":"enfriadores de mostrador","walk-in compressors":"compresores de cámara fría",
+      "air compressor systems":"sistemas de compresores de aire",
+      "aquatic amenity pumps":"bombas de amenidades acuáticas",
+      "aquatic and pool pumps":"bombas acuáticas y de alberca",
+      "aquatic and spa pumps":"bombas acuáticas y de spa",
+      "central chiller and hvac plant":"planta central de enfriadores y HVAC",
+      "central chiller plant":"planta central de enfriadores",
+      "cleanroom environmental controls":"controles ambientales de sala limpia",
+      "cold chain refrigeration":"refrigeración de cadena de frío",
+      "compressor racks":"racks de compresores",
+      "conveyor vfd drives":"variadores VFD de bandas",
+      "diagnostic imaging systems":"sistemas de imagen diagnóstica",
+      "display case electronics":"electrónica de vitrinas",
+      "domestic booster pumps":"bombas de presión domésticas",
+      "elevator vfds and motors":"VFD y motores de elevador",
+      "elevator traction drives":"variadores de tracción de elevador",
+      "elevator traction motors":"motores de tracción de elevador",
+      "escalator drive motors":"motores de escaleras eléctricas",
+      "evaporator fan arrays":"conjuntos de ventiladores evaporadores",
+      "forklift charging banks":"bancos de carga de montacargas",
       "fuel management electronics":"electrónica de gestión de combustible",
-      "point-of-sale systems":"sistemas de punto de venta",
-      "PTAC units":"unidades PTAC","server cooling":"enfriamiento de servidores",
-      "UPS systems":"sistemas UPS","power distribution units":"unidades de distribución de energía",
-      "conveyors":"bandas transportadoras","welding equipment":"equipo de soldadura",
-      "CNC machines":"máquinas CNC","pneumatic systems":"sistemas neumáticos"
+      "generator and switchgear":"generador y tablero eléctrico",
+      "hpc and lab power infrastructure":"infraestructura eléctrica de HPC y laboratorio",
+      "high-bay lighting systems":"sistemas de iluminación de gran altura",
+      "high-horsepower process pumps":"bombas de proceso de alta potencia",
+      "high-power analytical instruments":"instrumentos analíticos de alta potencia",
+      "kitchen exhaust hoods":"campanas de extracción de cocina",
+      "led driver arrays":"conjuntos de drivers LED",
+      "makeup air handlers":"manejadoras de aire de reposición",
+      "multi-tenant elevator drives":"variadores de elevador multiusuario",
+      "per-room ptac units":"unidades PTAC por habitación",
+      "precision cooling systems":"sistemas de enfriamiento de precisión",
+      "process water and cooling pumps":"bombas de agua de proceso y enfriamiento",
+      "production vfds and drives":"VFD y variadores de producción",
+      "rack refrigeration systems":"sistemas de refrigeración en rack",
+      "reach-in cooler condensers":"condensadores de enfriadores de mostrador",
+      "rooftop hvac units":"unidades HVAC de techo",
+      "rooftop packaged hvac":"HVAC empaquetado de techo",
+      "server room ups systems":"sistemas UPS de sala de servidores",
+      "ups and power conditioning":"UPS y acondicionamiento de energía",
+      "vav air handlers":"manejadoras de aire VAV",
+      "vfd-controlled condensers":"condensadores controlados por VFD",
+      "walk-in condensing units":"unidades condensadoras de cámara fría"
     },
     ss: {
       nego: { name:"Negociación de Tarifa Eléctrica", tag:"Mercado desregulado", desc:"Su estado tiene un mercado eléctrico desregulado, lo que significa que puede elegir su tarifa de suministro. Negociamos directamente con generadores en su nombre para reducir la porción de suministro de su factura." },
@@ -3789,6 +3817,19 @@ function setElecHeat(v){
 
 function buildIllustration(eqItems,inflated){
   eqItems=eqItems||[];
+  // Language-aware labels (compact ES terms chosen to fit the narrow SVG columns)
+  var isES=(state.lang==='es');
+  var L = isES ? {
+    yourEquip:'SU EQUIPO', smooth:'FLUJO ESTABLE', turbulent:'FLUJO INESTABLE',
+    clean:'ENERGÍA LIMPIA', distorted:'ENERGÍA SUCIA',
+    meter:'LECTURA', actual:'uso real', youPay:'usted paga'
+  } : {
+    yourEquip:'YOUR EQUIPMENT', smooth:'SMOOTH FLOW', turbulent:'TURBULENT FLOW',
+    clean:'CLEAN ENERGY', distorted:'DISTORTED ENERGY',
+    meter:'METER READS', actual:'actual use', youPay:'you pay for'
+  };
+  var _enm = isES && STRINGS.es && STRINGS.es.equipNames ? STRINGS.es.equipNames : null;
+  function eqName(n){ return (_enm && _enm[(n||'').toLowerCase()]) ? _enm[(n||'').toLowerCase()] : n; }
   var W=340,H=240;
   var c1x=4,c1w=104,c2x=112,c2w=116,c3x=232,c3w=104;
   var c1cx=c1x+c1w/2,c2cx=c2x+c2w/2,c3cx=c3x+c3w/2;
@@ -3827,15 +3868,15 @@ function buildIllustration(eqItems,inflated){
   // Column backgrounds
   svg+='<rect x="'+c1x+'" y="1" width="'+c1w+'" height="'+(H-2)+'" rx="8" fill="rgba(100,200,130,0.05)" stroke="rgba(100,200,130,0.18)" stroke-width="1"/>';
   svg+='<rect x="'+c3x+'" y="1" width="'+c3w+'" height="'+(H-2)+'" rx="8" fill="rgba(240,90,70,0.05)" stroke="rgba(240,90,70,0.18)" stroke-width="1"/>';
-  svg+='<text x="'+c2cx+'" y="14" text-anchor="middle" fill="rgba(255,255,255,0.36)" font-family="Barlow,Arial,sans-serif" font-size="9" font-weight="600" letter-spacing="0.05em">YOUR EQUIPMENT</text>';
+  svg+='<text x="'+c2cx+'" y="14" text-anchor="middle" fill="rgba(255,255,255,0.36)" font-family="Barlow,Arial,sans-serif" font-size="9" font-weight="600" letter-spacing="0.05em">'+L.yourEquip+'</text>';
   [r2y,r3y].forEach(function(dy){
     svg+='<line x1="'+c1x+'" y1="'+dy+'" x2="'+(c1x+c1w)+'" y2="'+dy+'" stroke="rgba(100,200,130,0.14)" stroke-width="0.75"/>';
     svg+='<line x1="'+c3x+'" y1="'+dy+'" x2="'+(c3x+c3w)+'" y2="'+dy+'" stroke="rgba(240,90,70,0.14)" stroke-width="0.75"/>';
   });
   // Row labels + pipe (row 1)
   var lyo=13;
-  svg+='<text x="'+c1cx+'" y="'+(r1y+lyo)+'" text-anchor="middle" fill="rgba(100,210,140,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">SMOOTH FLOW</text>';
-  svg+='<text x="'+c3cx+'" y="'+(r1y+lyo)+'" text-anchor="middle" fill="rgba(240,110,80,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">TURBULENT FLOW</text>';
+  svg+='<text x="'+c1cx+'" y="'+(r1y+lyo)+'" text-anchor="middle" fill="rgba(100,210,140,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">'+L.smooth+'</text>';
+  svg+='<text x="'+c3cx+'" y="'+(r1y+lyo)+'" text-anchor="middle" fill="rgba(240,110,80,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">'+L.turbulent+'</text>';
   var py=r1y+20,ph=r1h-26,pr=ph/2,fy=py+ph/2;
   var p1x=c1x+8,p1w=c1w-16,p3x=c3x+8,p3w=c3w-16;
   svg+='<rect x="'+p1x+'" y="'+py+'" width="'+p1w+'" height="'+ph+'" rx="'+pr+'" fill="rgba(100,180,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1.25"/>';
@@ -3848,21 +3889,21 @@ function buildIllustration(eqItems,inflated){
     svg+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="'+b[2]+'" class="'+b[3]+'" fill="rgba(255,255,255,0.16)" stroke="rgba(255,255,255,0.42)" stroke-width="0.9"/>';
   });
   // Row 2 — waves
-  svg+='<text x="'+c1cx+'" y="'+(r2y+lyo)+'" text-anchor="middle" fill="rgba(100,210,140,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">CLEAN ENERGY</text>';
-  svg+='<text x="'+c3cx+'" y="'+(r2y+lyo)+'" text-anchor="middle" fill="rgba(240,110,80,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">DISTORTED ENERGY</text>';
+  svg+='<text x="'+c1cx+'" y="'+(r2y+lyo)+'" text-anchor="middle" fill="rgba(100,210,140,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">'+L.clean+'</text>';
+  svg+='<text x="'+c3cx+'" y="'+(r2y+lyo)+'" text-anchor="middle" fill="rgba(240,110,80,0.88)" font-family="Barlow,Arial,sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.05em">'+L.distorted+'</text>';
   var wy=r2y+r2h/2+5,wx1=c1x+10,wx2=c1x+c1w-10,wx3=c3x+10,wx4=c3x+c3w-10;
   svg+='<path d="M'+wx1+' '+wy+' C'+(wx1+10)+' '+(wy-15)+' '+(wx1+20)+' '+(wy+15)+' '+(wx1+30)+' '+wy+' C'+(wx1+40)+' '+(wy-15)+' '+(wx1+54)+' '+(wy+15)+' '+(wx1+64)+' '+wy+' C'+(wx1+74)+' '+(wy-12)+' '+(wx1+82)+' '+(wy+10)+' '+wx2+' '+wy+'" stroke="rgba(100,210,130,0.92)" stroke-width="2.5" fill="none"/>';
   svg+='<path d="M'+wx3+' '+wy+' C'+(wx3+5)+' '+(wy-20)+' '+(wx3+9)+' '+(wy+12)+' '+(wx3+16)+' '+(wy-10)+' C'+(wx3+20)+' '+(wy-22)+' '+(wx3+26)+' '+(wy+16)+' '+(wx3+34)+' '+(wy-12)+' C'+(wx3+38)+' '+(wy-20)+' '+(wx3+44)+' '+(wy+14)+' '+(wx3+52)+' '+(wy-8)+' C'+(wx3+56)+' '+(wy-18)+' '+(wx3+62)+' '+(wy+12)+' '+wx4+' '+wy+'" stroke="rgba(240,90,70,0.92)" stroke-width="2.5" fill="none"/>';
   // Row 3 — meters
   var mh=44,mox=10,my=r3y+6,mw=c1w-20;
   svg+='<rect x="'+(c1x+mox)+'" y="'+my+'" width="'+mw+'" height="'+mh+'" rx="5" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.25"/>';
-  svg+='<text x="'+c1cx+'" y="'+(my+13)+'" text-anchor="middle" fill="rgba(255,255,255,0.42)" font-family="Barlow,Arial,sans-serif" font-size="9">METER READS</text>';
+  svg+='<text x="'+c1cx+'" y="'+(my+13)+'" text-anchor="middle" fill="rgba(255,255,255,0.42)" font-family="Barlow,Arial,sans-serif" font-size="9">'+L.meter+'</text>';
   svg+='<text x="'+c1cx+'" y="'+(my+29)+'" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-family="Barlow,Arial,sans-serif" font-size="15" font-weight="700">100 kWh</text>';
-  svg+='<text x="'+c1cx+'" y="'+(my+41)+'" text-anchor="middle" fill="rgba(100,210,130,0.72)" font-family="Barlow,Arial,sans-serif" font-size="9">actual use</text>';
+  svg+='<text x="'+c1cx+'" y="'+(my+41)+'" text-anchor="middle" fill="rgba(100,210,130,0.72)" font-family="Barlow,Arial,sans-serif" font-size="9">'+L.actual+'</text>';
   svg+='<rect x="'+(c3x+mox)+'" y="'+my+'" width="'+mw+'" height="'+mh+'" rx="5" fill="rgba(255,255,255,0.04)" stroke="rgba(240,90,70,0.3)" stroke-width="1.25"/>';
-  svg+='<text x="'+c3cx+'" y="'+(my+13)+'" text-anchor="middle" fill="rgba(255,255,255,0.42)" font-family="Barlow,Arial,sans-serif" font-size="9">METER READS</text>';
+  svg+='<text x="'+c3cx+'" y="'+(my+13)+'" text-anchor="middle" fill="rgba(255,255,255,0.42)" font-family="Barlow,Arial,sans-serif" font-size="9">'+L.meter+'</text>';
   svg+='<text x="'+c3cx+'" y="'+(my+29)+'" text-anchor="middle" fill="rgba(240,110,80,0.95)" font-family="Barlow,Arial,sans-serif" font-size="15" font-weight="700">'+inflated+' kWh</text>';
-  svg+='<text x="'+c3cx+'" y="'+(my+41)+'" text-anchor="middle" fill="rgba(240,90,70,0.72)" font-family="Barlow,Arial,sans-serif" font-size="9">you pay for</text>';
+  svg+='<text x="'+c3cx+'" y="'+(my+41)+'" text-anchor="middle" fill="rgba(240,90,70,0.72)" font-family="Barlow,Arial,sans-serif" font-size="9">'+L.youPay+'</text>';
   // Equipment icons, names, and animated connectors
   var rowCy=[r1y+r1h/2, r2y+r2h/2, r3y+r3h/2];
   var glCls=['ilg0','ilg1','ilg2'], lnCls=['ild0','ild1','ild2'];
@@ -3870,7 +3911,9 @@ function buildIllustration(eqItems,inflated){
   eqItems.slice(0,3).forEach(function(e,i){
     var cy=rowCy[i], tx=c2cx-16, ty=cy-18;
     svg+=ico(e.ico, tx, ty, 32);
-    svg+='<text x="'+c2cx+'" y="'+(ty+44)+'" text-anchor="middle" fill="rgba(255,255,255,0.52)" font-family="Barlow,Arial,sans-serif" font-size="8" font-weight="500">'+e.name+'</text>';
+    var _dn=eqName(e.name);
+    var _tl=(_dn.length>22)?' textLength="106" lengthAdjust="spacingAndGlyphs"':'';
+    svg+='<text x="'+c2cx+'" y="'+(ty+44)+'" text-anchor="middle" fill="rgba(255,255,255,0.52)" font-family="Barlow,Arial,sans-serif" font-size="8" font-weight="500"'+_tl+'>'+_dn+'</text>';
     var ay=ty+16;
     // Left: clean blue dashed arrow (smooth power entering equipment)
     var lx1=c1x+c1w+2, lx2=tx-4;
@@ -3883,8 +3926,7 @@ function buildIllustration(eqItems,inflated){
     svg+='<path class="'+glCls[i]+'" d="'+d+'" stroke="rgba(255,80,30,1)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.2"/>';
     // Options A+C: draw-on + surge flicker (main line)
     svg+='<path class="'+lnCls[i]+'" d="'+d+'" stroke="rgba(255,110,50,0.92)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    // Arrowhead (static, always visible after draw)
-    svg+='<polyline points="'+(rx2-8)+','+(ay-4)+' '+rx2+','+ay+' '+(rx2-8)+','+(ay+4)+'" stroke="rgba(255,110,50,0.96)" stroke-width="1.2" fill="none"/>';
+    // (Removed the static red arrowhead — it overlapped the distorted-energy column; the pulse alone carries the meaning.)
     // Option B: traveling spark
     svg+='<circle r="2.5" fill="rgba(255,210,100,0.95)" filter="url(#illus-spark-glow)"><animateMotion dur="2.5s" repeatCount="indefinite" begin="'+sparkBegin[i]+'s" path="'+d+'"/></circle>';
   });
