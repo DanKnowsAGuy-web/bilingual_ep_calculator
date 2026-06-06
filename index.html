@@ -701,13 +701,42 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .band-btn.active .band-btn-range{color:#fff;}
 .band-btn-arrow{font-size:14px;color:rgba(255,255,255,0.3);flex-shrink:0;margin-left:10px;}
 .band-btn.active .band-btn-arrow{color:var(--copper-pale);}
-/* Step 1 grayed out after selection */
-.band-step1-done .band-btn{opacity:0.38;pointer-events:none;}
-.band-step1-done .band-btn.active{opacity:0.75;}
+/* Step 1 dimmed after selection but still re-tappable (pick a different range) */
+.band-step1-done .band-btn{opacity:0.5;}
+.band-step1-done .band-btn:hover{opacity:0.85;}
+.band-step1-done .band-btn.active{opacity:1;}
 .band-refine-label{font-family:'Barlow',sans-serif;font-size:clamp(15px,2.2vw,17px);font-weight:700;color:#fff;margin:16px 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .band-refine-range{color:var(--copper-pale);font-weight:400;font-size:clamp(13px,1.8vw,15px);}
 .band-reset-btn{margin-top:10px;background:none;border:none;color:rgba(255,255,255,0.35);font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px;}
 .band-reset-btn:hover{color:rgba(255,255,255,0.65);}
+/* ── FACILITY COUNT CHIPS ── */
+.c-field-sub{font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;margin-top:4px;}
+.fac-count-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.fc-chip{flex:0 0 auto;padding:12px 18px;border:1px solid rgba(200,169,110,0.22);background:rgba(200,169,110,0.045);color:var(--white);font-family:'Barlow',sans-serif;font-size:clamp(14px,2vw,16px);font-weight:500;cursor:pointer;transition:all 0.16s;line-height:1.2;position:relative;overflow:hidden;}
+.fc-chip::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(200,169,110,0.12) 50%,transparent 80%);transform:skewX(-18deg);transition:left 0.55s ease;pointer-events:none;}
+.fc-chip:hover::after{left:160%;}
+.fc-chip:hover{border-color:var(--gold);background:rgba(200,169,110,0.11);box-shadow:0 0 14px rgba(200,169,110,0.2);}
+.fc-chip.active{border-color:var(--gold);background:rgba(200,169,110,0.18);color:var(--gold-bright);font-weight:700;}
+/* ── SIGNAL BOX ── */
+.signal-box{margin-top:16px;padding:14px 16px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.28);border-left:3px solid var(--copper);animation:bandShimmer 0.35s cubic-bezier(0.22,1,0.36,1) both;}
+.signal-box-label{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--copper-pale);margin-bottom:7px;}
+.signal-box-text{font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.82);line-height:1.65;}
+/* ── PORTFOLIO / PER-FACILITY (RESULT) ── */
+.hero-tag{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--copper-pale);margin-bottom:10px;}
+.portfolio-defer{font-family:'Barlow',sans-serif;font-size:12.5px;color:rgba(255,255,255,0.5);line-height:1.55;margin-top:12px;}
+.perfac-block{margin-top:24px;padding-top:20px;border-top:1px solid rgba(200,169,110,0.18);}
+.perfac-tag{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--copper-pale);margin-bottom:8px;}
+.perfac-range{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.perfac-range #pf-floor,.perfac-range #pf-ceil{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(22px,4.5vw,32px);color:rgba(255,255,255,0.92);line-height:1;letter-spacing:-0.01em;}
+.perfac-range .perfac-to{font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase;color:rgba(255,255,255,0.45);}
+.cum-row-sm{margin-top:12px;}
+.cum-row-sm .cum-cell{padding:13px 16px;}
+.cum-row-sm .cum-val{font-size:clamp(18px,4vw,26px)!important;margin-bottom:5px;}
+.cum-row-sm .cum-lab{font-size:11px;}
+.rn-equip-cta{margin-top:18px;padding:16px 18px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.28);border-left:3px solid var(--copper);font-family:'Barlow',sans-serif;font-size:15px;color:rgba(255,255,255,0.9);line-height:1.6;}
+.rn-equip-cta a{color:var(--gold-bright);text-decoration:underline;text-underline-offset:3px;}
+.rn-equip-cta-note{margin-bottom:14px;}
+.rn-equip-btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none!important;color:#fff!important;}
 .s3-known-item-alert{border-left:3px solid var(--gold);background:rgba(200,169,110,0.06);padding-left:14px;margin-left:-14px;}
 .s3-known-item-alert .s3-known-label{color:var(--gold-light);}
 /* ── SOCIAL PROOF STRIP ── */
@@ -1166,7 +1195,7 @@ body{font-size:17px;}
     <div id="c-s2" style="display:none">
       <div class="c-progress"><span class="c-progress-step done"></span><span class="c-progress-step done"></span><span class="c-progress-step active"></span><span class="c-progress-step"></span><span class="c-progress-label">3 / 4</span></div>
       <div id="c-claim-s2"></div>
-      <span class="c-ask" id="t-s2-ask">Two inputs and we will calculate exactly what this is costing your facility.</span>
+      <span class="c-ask" id="t-s2-ask">Three inputs and we will calculate exactly what this is costing your facility.</span>
 
       <!-- MX ONLY: Tariff selector — first input -->
       <div id="s2-mx-tariff-block" style="display:none;margin-top:22px;">
@@ -1203,7 +1232,7 @@ body{font-size:17px;}
 
       <!-- SPEND — both US and MX -->
       <div style="margin-top:22px;">
-        <div class="c-field-lbl" id="t-s2-spend-lbl">Monthly electricity spend <span id="c2-mo" class="c-field-aside"></span></div>
+        <div class="c-field-lbl" id="t-s2-spend-lbl">Monthly electricity spend per facility <span id="c2-mo" class="c-field-aside"></span></div>
         <div id="band-step1" class="band-grid"></div>
         <div id="band-step2-wrap" style="display:none">
           <div class="band-refine-label" id="t-narrow">Narrow it down <span id="band-refine-range" class="band-refine-range"></span></div>
@@ -1212,8 +1241,19 @@ body{font-size:17px;}
         </div>
       </div>
 
+      <!-- FACILITY COUNT — per-facility portfolio signal -->
+      <div style="margin-top:24px;" id="fac-count-block">
+        <div class="c-field-lbl" id="t-faccount-lbl">Roughly how many similar facilities do you operate?</div>
+        <div class="c-field-sub" id="t-faccount-sub">An estimate is fine. We'll confirm the details later.</div>
+        <div class="fac-count-grid" id="fac-count-chips"></div>
+        <div class="signal-box" id="signal-box" style="display:none;">
+          <div class="signal-box-label" id="signal-box-label"></div>
+          <div class="signal-box-text" id="signal-box-text"></div>
+        </div>
+      </div>
+
       <!-- LOCATION — US state or MX region + cooling -->
-      <div style="margin-top:24px;">
+      <div style="margin-top:24px;" id="s2-location-block">
         <div id="s2-us-location">
           <div class="c-field-lbl" id="t-us-state-lbl">Primary state <span id="c2-split" class="c-field-aside"></span></div>
           <div class="sel-wrap"><select id="c2-state" onchange="c2State()"></select></div>
@@ -1301,6 +1341,8 @@ body{font-size:17px;}
   <div class="result-box">
     <div class="result-preamble" id="result-preamble"></div>
     <div class="result-inner">
+      <!-- HERO: portfolio total when >1 facility, otherwise the single-facility range -->
+      <div class="hero-tag" id="hero-tag" style="display:none;">Across your portfolio</div>
       <div class="result-range">
         <span class="result-num" id="r-floor">$0</span>
         <span class="result-to">to</span>
@@ -1312,7 +1354,21 @@ body{font-size:17px;}
         <div class="cum-cell"><div class="cum-val" id="cum-5yr">$0</div><div class="cum-lab">5-year range</div></div>
         <div class="cum-cell"><div class="cum-val" id="cum-10yr">$0</div><div class="cum-lab">10-year range</div></div>
       </div>
+      <div class="portfolio-defer" id="t-portfolio-defer" style="display:none;">Estimate assumes similar facilities. Multi-state portfolios get a tailored review.</div>
       <div class="cum-rate-note" id="cum-rate-note"></div>
+      <!-- SECONDARY: per-facility detail, shown only when >1 facility -->
+      <div class="perfac-block" id="perfac-block" style="display:none;">
+        <div class="perfac-tag" id="perfac-tag">Per facility</div>
+        <div class="perfac-range">
+          <span id="pf-floor">$0</span>
+          <span class="perfac-to" id="t-portfolio-to">to</span>
+          <span id="pf-ceil">$0</span>
+        </div>
+        <div class="cum-row cum-row-sm">
+          <div class="cum-cell"><div class="cum-val" id="pf-cum-5yr">$0</div><div class="cum-lab" id="t-pf-cum5">5-year range</div></div>
+          <div class="cum-cell"><div class="cum-val" id="pf-cum-10yr">$0</div><div class="cum-lab" id="t-pf-cum10">10-year range</div></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1354,13 +1410,24 @@ body{font-size:17px;}
       </div>
     </div>
 
-    <div class="rn-bridge">
+    <div class="rn-bridge" id="rn-bridge-turnkey">
       <p class="rn-bridge-p" id="t-bridge1"><strong>We address this in two steps:</strong> (1) cleaning the power at the source, and (2) retrofitting your equipment so it runs intelligently.</p>
       <p class="rn-bridge-p" id="t-bridge2">We almost never recommend replacement. Every other energy company leads with new equipment because that is how they make money. We lead with retrofits because the ROI is almost always better and your existing equipment is usually worth saving.</p>
       <p class="rn-bridge-p rn-bridge-bold" id="t-bridge3">If you find a better solution, we will pay you a finder's fee for the introduction.</p>
       <p class="rn-bridge-p" id="t-bridge4">Our process is designed to ISO standards and is fully third-party auditable. We are required by our own process to recommend the highest ROI solution on our platform for your facility. Not because it sounds good. Because our process does not allow anything else.</p>
       <p class="rn-bridge-p" id="t-bridge5">We do not have customers. We have clients: people under our protection and care. The 22-Minute Facility Review is where that relationship starts.</p>
     </div>
+
+    <!-- EQUIPMENT-ONLY narrative variant (per-facility spend < $1,500/mo) -->
+    <div class="rn-bridge" id="rn-equip" style="display:none;">
+      <p class="rn-bridge-p" id="t-equip1"></p>
+      <p class="rn-bridge-p" id="t-equip2"></p>
+      <p class="rn-bridge-p" id="t-equip3"></p>
+      <p class="rn-bridge-p rn-bridge-bold" id="t-equip4"></p>
+      <p class="rn-guarantee" id="t-equip-guarantee"></p>
+      <div class="rn-equip-cta" id="rn-equip-cta"></div>
+    </div>
+
     <p class="rn-guarantee" id="t-guarantee">Your session with an energy strategist is on us. If our engineer cannot find at least one of these three taxes running in your building, we cover their $150 diagnostic fee as well. You pay nothing unless you decide to move forward. No card required.</p>
 
     <!-- Primary CTA: calendar booking -->
@@ -1370,7 +1437,7 @@ body{font-size:17px;}
     </a>
 
     <!-- Secondary CTA: SMS with preview -->
-    <div class="rn-sms-wrap">
+    <div class="rn-sms-wrap" id="rn-sms-wrap">
       <div class="rn-sms-label">Or send a text to get started now</div>
       <div class="rn-sms-preview" id="sms-preview-card">
         <div class="rn-sms-preview-to">To: Energy Plus <span class="rn-sms-num">(864) 777-0688</span></div>
@@ -2046,14 +2113,55 @@ var state = {
   heatComp:"heatpump",
   demRate:12, demPortion:0.40, demRed:0.05, demBattery:false,
   // Mexico-specific
-  mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50
+  mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50,
+  // Facility count / portfolio
+  count:0, countKey:"", countLabel:"", resultSummary:null
 };
 
-function fmtFull(n){ return "$" + Math.round(n).toLocaleString("en-US"); }
-function fmtBoxRange(lo,hi){
-  if(hi>=100000)return "$"+Math.round(lo/1000)+"k – $"+Math.round(hi/1000)+"k";
-  return "$"+Math.round(lo).toLocaleString("en-US")+" – $"+Math.round(hi).toLocaleString("en-US");
+// ── EQUIPMENT-ONLY CTA CONFIG ──
+// mode: "sms" = text link w/ dynamic DIY body | "link" = URL | "note" = static text
+var EQUIP_ONLY_CTA = { mode:"sms", link:"" };
+
+// ── FACILITY COUNT OPTIONS (low-end values drive all math) ──
+// low drives qualification/tier math; [low,high] span drives the defensible portfolio range.
+// "20plus" is open-ended → high capped at 20 (conservative; understates by design).
+var FAC_COUNTS = [
+  { key:"one",    low:1,  high:1,  t:"facCountOne"  },
+  { key:"2to4",   low:2,  high:4,  t:"facCount2"    },
+  { key:"5to9",   low:5,  high:9,  t:"facCount5"    },
+  { key:"10to19", low:10, high:19, t:"facCount10"   },
+  { key:"20plus", low:20, high:20, t:"facCount20"   }
+];
+function highCount(){
+  var fc=FAC_COUNTS.filter(function(x){return x.key===state.countKey;})[0];
+  return fc?fc.high:(state.count||1);
 }
+
+// ── SPEND TIER + STATE LOGIC (driver = per-facility MONTHLY spend) ──
+// state.spend is stored ANNUAL; per-facility monthly = state.spend / 12.
+function spendTier(monthly){
+  if(monthly < 1500) return { key:"under1500", min:Infinity };
+  if(monthly < 2000) return { key:"1500_1999", min:20 };
+  if(monthly < 3500) return { key:"2000_3499", min:10 };
+  if(monthly < 5000) return { key:"3500_4999", min:5  };
+  return { key:"5000plus", min:1 };
+}
+function facilityState(){
+  if(!state.spend || !state.count) return null;
+  var tier = spendTier(state.spend/12);
+  if(tier.key==="under1500") return { state:"equipment_only", tier:tier };
+  if(state.count >= tier.min) return { state:"turnkey_fit", tier:tier };
+  return { state:"turnkey_warm", tier:tier };
+}
+
+function fmtFull(n){ return "$" + Math.round(n).toLocaleString("en-US"); }
+function fmtBoxVal(n){
+  n=Math.round(n);
+  if(n>=1000000) return "$"+(n/1000000).toFixed(3)+"m";   // e.g. $2.480m
+  if(n>=1000)    return "$"+Math.round(n/1000)+"k";        // e.g. $536k
+  return "$"+n.toLocaleString("en-US");
+}
+function fmtBoxRange(lo,hi){ return fmtBoxVal(lo)+" – "+fmtBoxVal(hi); }
 function fmtM(n){ n=Math.round(n); if(n>=1000000) return "$"+(Math.round(n/100000)/10).toFixed(1).replace(/\.0$/,"")+"M"; return "$"+n.toLocaleString("en-US"); }
 function fmtK(n){ if(n>=1000000) return "$"+(Math.round(n/100000)/10).toFixed(1).replace(/\.0$/,"")+"M"; return "$"+Math.round(n/1000)+"K"; }
 function pctTxt(x){ var v=x*100; return (Math.abs(v-Math.round(v))<0.05?Math.round(v):v.toFixed(1))+"%"; }
@@ -2152,23 +2260,51 @@ function render(){
     var el=document.getElementById("s-"+k); if(el){ el.classList.toggle("on",on); el.classList.toggle("off",!on); }
   });
   var _hch=document.getElementById("heat-choice"); if(_hch) _hch.classList.toggle("hidden", !state.tHeat);
+  // ── Portfolio hero vs single-facility (low-end count; understates by design) ──
+  var _lowCount=state.count||1;
+  var _highCount=highCount();
+  var _isPortfolio=(_lowCount>1 && state.spend>0);
+  // Defensible portfolio range: fewest sites × lowest per-site savings  →  most sites × highest per-site savings.
+  var _heroFloor=_isPortfolio ? r.floor*_lowCount  : r.floor;
+  var _heroCeil =_isPortfolio ? r.ceil*_highCount : r.ceil;
   var _rf=document.getElementById("r-floor"),_rc=document.getElementById("r-ceil");
   if(state.view==="result"){
     // Set numbers silently — showResult's sequenced animateCountUp handles the animation
-    if(_rf) _rf.textContent=fmtFull(r.floor);
-    if(_rc) _rc.textContent=fmtFull(r.ceil);
+    if(_rf) _rf.textContent=fmtFull(_heroFloor);
+    if(_rc) _rc.textContent=fmtFull(_heroCeil);
   } else if(state.selected&&!state.hasAnimated){
-    state.hasAnimated=true;countUp(_rf,r.floor,800);countUp(_rc,r.ceil,1050);
+    state.hasAnimated=true;countUp(_rf,_heroFloor,800);countUp(_rc,_heroCeil,1050);
   } else {
-    if(_rf) _rf.textContent=fmtFull(r.floor);
-    if(_rc) _rc.textContent=fmtFull(r.ceil);
+    if(_rf) _rf.textContent=fmtFull(_heroFloor);
+    if(_rc) _rc.textContent=fmtFull(_heroCeil);
   }
+  // % of annual bill is the same ratio per-facility or portfolio
   document.getElementById("r-pcts").textContent = pctTxt(state.spend>0?r.floor/state.spend:0) + " to " + pctTxt(state.spend>0?r.ceil/state.spend:0) + " " + (STRINGS[state.lang].annualBill||STRINGS.en.annualBill);
-  // Mexico: show peso equivalent below savings numbers
+  // Hero tag + per-facility secondary block
+  var _heroTag=document.getElementById("hero-tag");
+  var _perfacBlock=document.getElementById("perfac-block");
+  var _pfDefer=document.getElementById("t-portfolio-defer");
+  if(_isPortfolio){
+    if(_heroTag){ _heroTag.style.display=""; _heroTag.textContent=(SL2.portfolioAcross||"Across ")+countPhrase().toLowerCase(); }
+    if(_pfDefer){ _pfDefer.style.display=""; _pfDefer.textContent=SL2.portfolioDefer||"Estimate assumes similar facilities. Multi-state portfolios get a tailored review."; }
+    if(_perfacBlock){
+      var _ptag=document.getElementById("perfac-tag"); if(_ptag) _ptag.textContent=SL2.perFacility||"Per facility";
+      var _pff=document.getElementById("pf-floor"); if(_pff) _pff.textContent=fmtFull(r.floor);
+      var _pfc=document.getElementById("pf-ceil"); if(_pfc) _pfc.textContent=fmtFull(r.ceil);
+      var _pfTo=document.getElementById("t-portfolio-to"); if(_pfTo) _pfTo.textContent=SL2.portfolioTo||"to";
+      _perfacBlock.style.display="";
+    }
+  } else {
+    if(_heroTag) _heroTag.style.display="none";
+    if(_pfDefer) _pfDefer.style.display="none";
+    if(_perfacBlock) _perfacBlock.style.display="none";
+  }
+  if(state.view==="result"){ buildResultSummary(); applyPathway(); }
+  // Mexico: show peso equivalent below savings numbers (matches hero figure)
   var _pesoLine = document.getElementById("r-peso-line");
   if(state.country==="mx" && _pesoLine && state.spend>0){
     var fx = state.mxFxRate||17.50;
-    _pesoLine.textContent = "MXN $" + Math.round(r.floor*fx).toLocaleString("en-US") + " – MXN $" + Math.round(r.ceil*fx).toLocaleString("en-US") + " pesos anuales";
+    _pesoLine.textContent = "MXN $" + Math.round(_heroFloor*fx).toLocaleString("en-US") + " – MXN $" + Math.round(_heroCeil*fx).toLocaleString("en-US") + " pesos anuales";
     _pesoLine.style.display="";
   } else if(_pesoLine){ _pesoLine.style.display="none"; }
   var _sName=(document.getElementById("state-select")||{}).value||"";
@@ -2176,8 +2312,14 @@ function render(){
   var _ed=ESC_DATA[_tier];
   var _e5=escalFactor(_ed.rate,5);
   var _e10=escalFactor(_ed.rate,10);
-  document.getElementById("cum-5yr").textContent=fmtBoxRange(r.floor*_e5,r.ceil*_e5);
-  document.getElementById("cum-10yr").textContent=fmtBoxRange(r.floor*_e10,r.ceil*_e10);
+  // Hero cumulative boxes (portfolio when >1 facility)
+  document.getElementById("cum-5yr").textContent=fmtBoxRange(_heroFloor*_e5,_heroCeil*_e5);
+  document.getElementById("cum-10yr").textContent=fmtBoxRange(_heroFloor*_e10,_heroCeil*_e10);
+  // Per-facility cumulative boxes (secondary, only meaningful when portfolio shown)
+  if(_isPortfolio){
+    var _pc5=document.getElementById("pf-cum-5yr"); if(_pc5) _pc5.textContent=fmtBoxRange(r.floor*_e5,r.ceil*_e5);
+    var _pc10=document.getElementById("pf-cum-10yr"); if(_pc10) _pc10.textContent=fmtBoxRange(r.floor*_e10,r.ceil*_e10);
+  }
   var _rateNote=document.getElementById("cum-rate-note");
   if(_rateNote){
     var _abbr=STATE_ABBR[_sName]||"";
@@ -2315,9 +2457,9 @@ var STRINGS = {
     s1Doe: "According to the DOE, the average commercial building wastes <strong>30% of its energy</strong>. Facilities with newer equipment are often losing significantly more.",
     chooseFac: "Choose your facility type",
     backCountry: "← Change country",
-    s2Ask: "Two inputs and we will calculate exactly what this is costing your facility.",
-    s2AskMx: "Four inputs and we will calculate exactly what this is costing your facility.",
-    s2SpendLbl: "Monthly electricity spend",
+    s2Ask: "Three inputs and we will calculate exactly what this is costing your facility.",
+    s2AskMx: "Five inputs and we will calculate exactly what this is costing your facility.",
+    s2SpendLbl: "Monthly electricity spend per facility",
     narrowIt: "Narrow it down",
     changeRange: "Change range",
     stateLabel: "Primary state",
@@ -2366,6 +2508,40 @@ var STRINGS = {
     guarantee: "Your session with an energy strategist is on us. If our engineer cannot find at least one of these three taxes running in your building, we cover their $150 diagnostic fee as well. You pay nothing unless you decide to move forward. No card required.",
     smsSendNow: "Or send a text to get started now",
     smsVideoBtn: "Request Your Video Walkthrough",
+    // Facility count chips
+    facCountLbl: "Roughly how many similar facilities do you operate?",
+    facCountSub: "An estimate is fine. We'll confirm the details later.",
+    facCountOne: "Just one for now",
+    facCount2: "2 to 4",
+    facCount5: "5 to 9",
+    facCount10: "10 to 19",
+    facCount20: "20 or more",
+    facCountPhrase: {
+      one:"A single facility", "2to4":"Two to four facilities", "5to9":"Five to nine facilities",
+      "10to19":"Ten to nineteen facilities", "20plus":"Twenty or more facilities"
+    },
+    // Signal box
+    sigEquipLabel: "How we keep this honest",
+    sigEquipText: "Below about $1,500 a month per facility, a full done-for-you installation will not pay for itself, and we will not put you into a program that does not. The better path at this level is equipment only, with guided self-installation. You still capture the savings. You handle the install, and we stay on call for the questions.",
+    sigTurnkeyLabel: "How we structure turnkey work",
+    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" at about "+spendPhrase+" a month per facility. That's the scale our full done-for-you program is built for — we handle the entire install, start to finish. This one looks built for you."; },
+    sigFitSingleText: "A single facility at $5,000 a month or more justifies full turnkey on its own. No portfolio required.",
+    sigWarmText: function(tierMin){ return "We can absolutely start where you are. Worth knowing that our full turnkey economics get strongest across roughly "+tierMin+" or more facilities at your spend level, or on a single site above $5,000 a month. We'll find the right structure on the call."; },
+    // Portfolio result
+    perFacility: "Per facility",
+    portfolioAcross: "Across ",
+    portfolioTo: "to",
+    portfolioDefer: "Estimate assumes similar facilities. Multi-state portfolios get a tailored review.",
+    // Equipment-only narrative (DRAFT — pending client approval)
+    rnCredEquip: "Independently verified. Built from DOE consumption data and the information you just provided. Open the assumptions panel below and adjust the inputs yourself right now.",
+    equip1: "At your spend level, the honest move is equipment only. A full done-for-you installation would not pay for itself here, and we will not put you into a program that does not.",
+    equip2: "Here is what that means in practice: we identify the exact equipment that addresses these three taxes in your building, and you install it yourself with our guided support. You capture the same savings. You handle the install, and we stay on call for the questions.",
+    equip3: "We almost never recommend wholesale replacement. The ROI on a targeted retrofit is almost always better, and your existing equipment is usually worth saving.",
+    equip4: "If you find a better solution, we will pay you a finder's fee for the introduction.",
+    equipGuarantee: "The savings estimate above is yours to keep, no card required. When you are ready to spec the equipment, we will help you get it right.",
+    equipCtaNote: "Ready when you are — send a text and we'll help you spec the right hardware for your facility.",
+    equipCtaAction: "Text us about the do-it-yourself program",
+    smsDiyMsg: function(facLabel,countPhrase,spendMo){ return "Hi — I'm interested in your energy savings do-it-yourself program. I run a "+facLabel+(countPhrase?" — "+countPhrase:"")+(spendMo?", around "+spendMo+"/mo per facility on power":"")+". (Equipment-only / DIY)"; },
     // Dynamic render strings
     resultPreamble: function(noun,names){ return "Your "+noun+" is losing this every year to electrical waste. The most likely culprits: <strong>"+names+"</strong>."; },
     annualBill: "of your annual bill",
@@ -2451,9 +2627,9 @@ var STRINGS = {
     s1Doe: "Según la CONUEE, el edificio comercial promedio desperdicia <strong>30% de su energía</strong>. Las instalaciones con equipos más modernos suelen perder significativamente más.",
     chooseFac: "Elija el tipo de instalación",
     backCountry: "← Cambiar país",
-    s2Ask: "Dos datos y calcularemos exactamente cuánto le está costando esto a su instalación.",
-    s2AskMx: "Cuatro datos y calcularemos exactamente cuánto le está costando esto a su instalación.",
-    s2SpendLbl: "Gasto mensual en electricidad",
+    s2Ask: "Tres datos y calcularemos exactamente cuánto le está costando esto a su instalación.",
+    s2AskMx: "Cinco datos y calcularemos exactamente cuánto le está costando esto a su instalación.",
+    s2SpendLbl: "Gasto mensual en electricidad por instalación",
     narrowIt: "Afinar el rango",
     changeRange: "Cambiar rango",
     stateLabel: "Estado principal",
@@ -2502,6 +2678,40 @@ var STRINGS = {
     guarantee: "Su sesión con un estratega de energía corre por nuestra cuenta. Si nuestro ingeniero no puede encontrar al menos uno de estos tres cargos en su edificio, también cubrimos su tarifa de diagnóstico de $150. No paga nada a menos que decida seguir adelante. No se requiere tarjeta.",
     smsSendNow: "O envíe un mensaje de texto para comenzar ahora",
     smsVideoBtn: "Solicite su Recorrido en Video",
+    // Facility count chips
+    facCountLbl: "¿Aproximadamente cuántas instalaciones similares opera?",
+    facCountSub: "Una estimación está bien. Confirmaremos los detalles más adelante.",
+    facCountOne: "Solo una por ahora",
+    facCount2: "2 a 4",
+    facCount5: "5 a 9",
+    facCount10: "10 a 19",
+    facCount20: "20 o más",
+    facCountPhrase: {
+      one:"Una sola instalación", "2to4":"Dos a cuatro instalaciones", "5to9":"Cinco a nueve instalaciones",
+      "10to19":"Diez a diecinueve instalaciones", "20plus":"Veinte o más instalaciones"
+    },
+    // Signal box
+    sigEquipLabel: "Cómo mantenemos esto honesto",
+    sigEquipText: "Por debajo de unos $1,500 al mes por instalación, una instalación completa llave en mano no se paga sola, y no lo pondremos en un programa que no lo haga. El mejor camino a este nivel es solo equipo, con autoinstalación guiada. Usted captura los ahorros igual. Usted maneja la instalación, y nosotros quedamos disponibles para las preguntas.",
+    sigTurnkeyLabel: "Cómo estructuramos el trabajo llave en mano",
+    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" a unos "+spendPhrase+" al mes por instalación. Esa es la escala para la que está hecho nuestro programa completo llave en mano — nos encargamos de toda la instalación, de principio a fin. Esto parece hecho para usted."; },
+    sigFitSingleText: "Una sola instalación a $5,000 al mes o más justifica el programa completo llave en mano por sí sola. No se requiere portafolio.",
+    sigWarmText: function(tierMin){ return "Por supuesto podemos empezar donde usted está. Vale la pena saber que la economía de nuestro programa completo llave en mano es más fuerte a partir de aproximadamente "+tierMin+" o más instalaciones a su nivel de gasto, o en una sola instalación por encima de $5,000 al mes. Encontraremos la estructura correcta en la llamada."; },
+    // Portfolio result
+    perFacility: "Por instalación",
+    portfolioAcross: "En ",
+    portfolioTo: "a",
+    portfolioDefer: "La estimación asume instalaciones similares. Los portafolios en varios estados reciben una revisión personalizada.",
+    // Equipment-only narrative (BORRADOR — pendiente de aprobación del cliente)
+    rnCredEquip: "Verificado de forma independiente. Construido con datos de consumo del DOE y la información que acaba de proporcionar. Abra el panel de supuestos a continuación y ajuste los datos usted mismo ahora.",
+    equip1: "A su nivel de gasto, lo honesto es solo equipo. Una instalación completa llave en mano no se pagaría sola aquí, y no lo pondremos en un programa que no lo haga.",
+    equip2: "Esto significa en la práctica: identificamos el equipo exacto que aborda estos tres cargos en su edificio, y usted lo instala con nuestro apoyo guiado. Captura los mismos ahorros. Usted maneja la instalación, y nosotros quedamos disponibles para las preguntas.",
+    equip3: "Casi nunca recomendamos el reemplazo total. El ROI de una modernización dirigida casi siempre es mejor, y su equipo existente generalmente vale la pena conservarlo.",
+    equip4: "Si encuentra una mejor solución, le pagaremos una comisión por la presentación.",
+    equipGuarantee: "La estimación de ahorro de arriba es suya, sin tarjeta requerida. Cuando esté listo para especificar el equipo, le ayudaremos a hacerlo bien.",
+    equipCtaNote: "Cuando esté listo — envíenos un mensaje y le ayudaremos a especificar el hardware correcto para su instalación.",
+    equipCtaAction: "Envíenos un mensaje sobre el programa 'hágalo usted mismo'",
+    smsDiyMsg: function(facLabel,countPhrase,spendMo){ return "Hola — me interesa su programa de ahorro de energía 'hágalo usted mismo'. Tengo un "+facLabel+(countPhrase?" — "+countPhrase:"")+(spendMo?", alrededor de "+spendMo+"/mes por instalación en electricidad":"")+". (Solo equipo / DIY)"; },
     // Dynamic render strings
     resultPreamble: function(noun,names,facKey){
       var SL=STRINGS.es;
@@ -2658,6 +2868,10 @@ function applyStrings(){
   var nb=document.getElementById("t-narrow");
   if(nb){ var rr=document.getElementById("band-refine-range"); nb.innerHTML=S.narrowIt+(rr?" <span id='band-refine-range' class='band-refine-range'>"+rr.textContent+"</span>":""); }
   var cr=document.getElementById("t-change-range"); if(cr) cr.textContent=S.changeRange;
+  // Facility count block
+  var fcl=document.getElementById("t-faccount-lbl"); if(fcl) fcl.textContent=S.facCountLbl;
+  var fcs=document.getElementById("t-faccount-sub"); if(fcs) fcs.textContent=S.facCountSub;
+  renderFacCounts(); updateSignalBox();
   var s2b=document.getElementById("t-s2-back"); if(s2b) s2b.textContent=S.s2Back;
   var s2n=document.getElementById("s2-next-btn"); if(s2n) s2n.childNodes[0]&&(s2n.childNodes[0].textContent=S.next);
   // US state label
@@ -2671,7 +2885,7 @@ function applyStrings(){
   var calb=document.getElementById("t-cal-btn"); if(calb) calb.textContent=S.calBtn;
   var smsb=document.getElementById("t-sms-btn"); if(smsb) smsb.textContent=S.smsBtn;
   // Cum labels
-  document.querySelectorAll(".cum-lab").forEach(function(el,i){ el.textContent=i===0?S.cumLab5:S.cumLab10; });
+  document.querySelectorAll(".cum-lab").forEach(function(el,i){ el.textContent=(i%2===0)?S.cumLab5:S.cumLab10; });
   // Result narrative
   var rnc=document.getElementById("t-rn-cred"); if(rnc) rnc.textContent=S.rnCred;
   var thd=document.getElementById("t-tax-hd"); if(thd) thd.textContent=S.taxHd;
@@ -2705,6 +2919,7 @@ function applyStrings(){
     updateClaimS2();
     if(state.view==="s3"||state.view==="result") updateClaimS3();
   }
+  if(state.view==="result"){ render(); }
   var mxttl=document.getElementById("t-mx-tariff-top-lbl"); if(mxttl) mxttl.textContent=S.mxTariffTopLabel||S.mxTariffLabel;
   // Adjust panel rate-row labels
   var ll=[["t-lbl-harmo","lblHarmo"],["t-lbl-hvac","lblHvac"],["t-lbl-cool","lblCool"],
@@ -3136,7 +3351,7 @@ function goStage(v){
   if(crumbs) crumbs.style.display="none";
   updateCrumbs();
   if(v==="s2"){
-    updateClaimS2(); bandReset(); renderBands(); checkS2Ready();
+    updateClaimS2(); bandReset(); renderBands(); renderFacCounts(); updateSignalBox(); updateS2Disclosure(); checkS2Ready();
     // Show/hide Mexico-specific blocks
     var tb=document.getElementById("s2-mx-tariff-block"); if(tb) tb.style.display=isMX()?"":"none";
     var tc=document.getElementById("mx-tariff-chip"); if(tc) tc.style.display="none";
@@ -3343,6 +3558,8 @@ function bandStep2Select(nb, label, selectedBtn){
   if(mo) mo.textContent=fmtBand(nb.lo)+' to '+fmtBand(nb.hi)+'/mo';
   syncSpendField();
   render();
+  updateSignalBox();
+  updateS2Disclosure();
   checkS2Ready();
 }
 function bandReset(){
@@ -3352,7 +3569,7 @@ function bandReset(){
   document.getElementById('band-step2-wrap').style.display='none';
   document.querySelectorAll('#band-step1 .band-btn').forEach(function(b){ b.classList.remove('active'); });
   var mo=document.getElementById('c2-mo'); if(mo) mo.textContent='';
-  syncSpendField(); checkS2Ready();
+  syncSpendField(); updateSignalBox(); updateS2Disclosure(); checkS2Ready();
 }
 function c2Spend(){ /* bands own spend now */ }
 function c2Rng(){ /* bands own spend now */ }
@@ -3369,14 +3586,136 @@ function buildChips(){ return []; }
 function niceRound(v){ return v; }
 function setSpend(v){ state.spend=v; syncSpendField(); render(); checkS2Ready(); }
 function updateChipActive(){ /* no-op */ }
+// ── FACILITY COUNT CHIPS ──────────────────────────────────────────────────
+function renderFacCounts(){
+  var g=document.getElementById('fac-count-chips'); if(!g) return;
+  var S=STRINGS[state.lang]||STRINGS.en;
+  g.innerHTML='';
+  FAC_COUNTS.forEach(function(fc){
+    var btn=document.createElement('button');
+    btn.className='fc-chip'+(state.countKey===fc.key?' active':'');
+    btn.type='button';
+    btn.textContent=S[fc.t]||fc.key;
+    btn.addEventListener('click',function(){ selectFacCount(fc); });
+    g.appendChild(btn);
+  });
+}
+function selectFacCount(fc){
+  state.count=fc.low; state.countKey=fc.key;
+  var S=STRINGS[state.lang]||STRINGS.en;
+  state.countLabel=S[fc.t]||fc.key;
+  renderFacCounts();
+  updateSignalBox();
+  updateS2Disclosure();
+  checkS2Ready();
+}
+// Progressive reveal in Stage 2: count appears after spend, location after count.
+function updateS2Disclosure(){
+  var fcb=document.getElementById('fac-count-block');
+  var loc=document.getElementById('s2-location-block');
+  var spendDone=state.spend>0;
+  var countDone=state.count>0;
+  if(fcb) fcb.style.display=spendDone?'':'none';
+  if(loc) loc.style.display=(spendDone&&countDone)?'':'none';
+}
+function countPhrase(){
+  var S=STRINGS[state.lang]||STRINGS.en;
+  return (S.facCountPhrase && S.facCountPhrase[state.countKey]) ? S.facCountPhrase[state.countKey] : (state.countLabel||"");
+}
+function updateSignalBox(){
+  var box=document.getElementById('signal-box');
+  var lbl=document.getElementById('signal-box-label');
+  var txt=document.getElementById('signal-box-text');
+  if(!box||!lbl||!txt) return;
+  var fs=facilityState();
+  if(!fs){ box.style.display='none'; return; }
+  var S=STRINGS[state.lang]||STRINGS.en;
+  var spendPhrase=fmtFull(Math.round(state.spend/12));
+  if(fs.state==='equipment_only'){
+    lbl.textContent=S.sigEquipLabel; txt.textContent=S.sigEquipText;
+  } else if(fs.state==='turnkey_fit'){
+    lbl.textContent=S.sigTurnkeyLabel;
+    if(fs.tier.key==='5000plus' && state.count===1){ txt.textContent=S.sigFitSingleText; }
+    else { txt.textContent=S.sigFitText(countPhrase(), spendPhrase); }
+  } else {
+    lbl.textContent=S.sigTurnkeyLabel;
+    txt.textContent=S.sigWarmText(fs.tier.min);
+  }
+  box.style.display='';
+}
+// ── RESULT PATHWAY (turnkey vs equipment-only) ────────────────────────────
+function renderEquipCta(){
+  var el=document.getElementById('rn-equip-cta'); if(!el) return;
+  var S=STRINGS[state.lang]||STRINGS.en;
+  var note=S.equipCtaNote||"";
+  if(EQUIP_ONLY_CTA.mode==='sms'){
+    var facLabel=(S.facLabels&&S.facLabels[state.selected])||(INSIGHTS[state.selected]?INSIGHTS[state.selected].label:"facility");
+    var cp=countPhrase()?countPhrase().toLowerCase():"";
+    var spendMo=state.spend?fmtFull(state.spend/12):"";
+    var _diyFn=(S.smsDiyMsg||STRINGS.en.smsDiyMsg);
+    var body=_diyFn(facLabel,cp,spendMo);
+    el.innerHTML='<div class="rn-equip-cta-note">'+note+'</div>'+
+      '<a class="txt-cta-btn rn-equip-btn" href="sms:'+EP_NUMBER+'?body='+encodeURIComponent(body)+'">'+
+      '<span class="txt-cta-ico">&#128241;</span> '+(S.equipCtaAction||"")+'</a>';
+  } else if(EQUIP_ONLY_CTA.mode==='link' && EQUIP_ONLY_CTA.link){
+    el.innerHTML='<div class="rn-equip-cta-note">'+note+'</div>'+
+      '<a class="txt-cta-btn rn-equip-btn" href="'+EQUIP_ONLY_CTA.link+'" target="_blank">'+(S.equipCtaAction||"")+'</a>';
+  } else {
+    el.textContent=note;
+  }
+}
+function applyPathway(){
+  var fs=facilityState();
+  var isEquip=(fs && fs.state==='equipment_only');
+  var S=STRINGS[state.lang]||STRINGS.en;
+  var turnkeyBridge=document.getElementById('rn-bridge-turnkey');
+  var equipBlock=document.getElementById('rn-equip');
+  var guarantee=document.getElementById('t-guarantee');
+  var calBtn=document.getElementById('cal-btn-primary');
+  var smsWrap=document.getElementById('rn-sms-wrap');
+  var cred=document.getElementById('t-rn-cred');
+  if(turnkeyBridge) turnkeyBridge.style.display=isEquip?'none':'';
+  if(guarantee) guarantee.style.display=isEquip?'none':'';
+  if(calBtn) calBtn.style.display=isEquip?'none':'';
+  if(smsWrap) smsWrap.style.display=isEquip?'none':'';
+  if(equipBlock) equipBlock.style.display=isEquip?'':'none';
+  if(cred) cred.textContent=isEquip?(S.rnCredEquip||S.rnCred):S.rnCred;
+  if(isEquip){
+    var e1=document.getElementById('t-equip1'); if(e1) e1.textContent=S.equip1;
+    var e2=document.getElementById('t-equip2'); if(e2) e2.textContent=S.equip2;
+    var e3=document.getElementById('t-equip3'); if(e3) e3.textContent=S.equip3;
+    var e4=document.getElementById('t-equip4'); if(e4) e4.textContent=S.equip4;
+    var eg=document.getElementById('t-equip-guarantee'); if(eg) eg.textContent=S.equipGuarantee;
+    renderEquipCta();
+  }
+}
+function buildResultSummary(){
+  var r=compute();
+  var fs=facilityState();
+  var lowCount=state.count||1;
+  var hiCount=highCount();
+  state.resultSummary={
+    state: fs?fs.state:null,
+    countLabel: state.countLabel||null,
+    lowEndCount: state.count||null,
+    highEndCount: hiCount,
+    spendTier: fs?fs.tier.key:null,
+    perFacilityMonthly: state.spend?Math.round(state.spend/12):null,
+    singleFacilityFloor: Math.round(r.floor),
+    singleFacilityCeil: Math.round(r.ceil),
+    portfolioFloor: Math.round(r.floor*lowCount),
+    portfolioCeil: Math.round(r.ceil*hiCount)
+  };
+  return state.resultSummary;
+}
 // ─────────────────────────────────────────────────────────────────────────
 function checkS2Ready(){
   var ready=false;
   if(isMX()){
-    ready=state.mxRegion.length>0 && state.spend>0;
+    ready=state.mxRegion.length>0 && state.spend>0 && state.count>0;
   } else {
     var stateVal=(document.getElementById("c2-state")||{}).value||"";
-    ready=stateVal.length>0 && state.spend>0;
+    ready=stateVal.length>0 && state.spend>0 && state.count>0;
   }
   var btn=document.getElementById("s2-next-btn");
   if(btn){
