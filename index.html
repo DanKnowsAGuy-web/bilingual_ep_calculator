@@ -714,6 +714,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .band-reset-btn:hover{color:rgba(255,255,255,0.65);}
 /* ── FACILITY COUNT CHIPS ── */
 .c-field-sub{font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.55;margin-top:4px;}
+/* "One last question" heating block — distinct, separated from the square-footage step */
+#heat-q-wrap{margin-top:30px;padding-top:26px;border-top:1px solid rgba(200,169,110,0.25);}
+.c-ask.heat-q-lbl{margin-top:0;}
+.heat-q-sub{font-family:'Barlow',sans-serif;font-size:15px;color:rgba(255,255,255,0.62);line-height:1.6;margin-top:8px;max-width:52ch;}
+#heat-q-chips{margin-top:16px;}
 .fac-count-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
 .fc-chip{flex:0 0 auto;padding:13px 18px;border:1px solid rgba(200,169,110,0.22);background:rgba(200,169,110,0.045);color:var(--white);font-family:'Barlow',sans-serif;font-size:clamp(15px,2.2vw,17px);font-weight:500;cursor:pointer;transition:all 0.16s;line-height:1.2;position:relative;overflow:hidden;}
 .fc-chip::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(200,169,110,0.12) 50%,transparent 80%);transform:skewX(-18deg);transition:left 0.55s ease;pointer-events:none;}
@@ -1347,9 +1352,9 @@ body{font-size:17px;}
       </div>
       <div class="c-ded-result" id="c-ded-result"></div>
       <!-- One last question: current heating type (US + MX) -->
-      <div id="heat-q-wrap" style="margin-top:24px;">
-        <div class="c-field-lbl" id="t-heat-q-lbl">One last question: how does your facility heat today?</div>
-        <div class="c-field-sub" id="t-heat-q-sub">This sharpens your estimate. If you heat with gas you'd know, it's a separate bill, so when in doubt we assume electric heat.</div>
+      <div id="heat-q-wrap">
+        <span class="c-ask heat-q-lbl" id="t-heat-q-lbl">One last question: how does your facility heat today?</span>
+        <div class="heat-q-sub" id="t-heat-q-sub">This sharpens your estimate. If you heat with gas you'd know, it's a separate bill, so when in doubt we assume electric heat.</div>
         <div class="fac-count-grid" id="heat-q-chips">
           <button class="fc-chip" type="button" data-heat="gas" onclick="setHeating('gas')" id="t-heat-gas">Natural gas</button>
           <button class="fc-chip" type="button" data-heat="heatpump" onclick="setHeating('heatpump')" id="t-heat-hp">Heat pump</button>
