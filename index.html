@@ -165,7 +165,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .cum-row{display:flex;gap:1px;background:rgba(200,169,110,0.22);margin-top:18px;border:1px solid rgba(200,169,110,0.22);width:100%;}
 .cum-cell{flex:1;background:var(--ink);padding:22px 20px;min-width:0;overflow:hidden;text-align:center;}
 .cum-cell .cum-val{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,6vw,42px);font-weight:600;color:#fff;line-height:1;margin-bottom:8px;font-variant-numeric:tabular-nums;}
-.cum-cell .cum-lab{font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);line-height:1.4;}
+.cum-cell .cum-lab{font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);line-height:1.4;}
 
 .method{margin:0 38px;padding:22px 0 4px;border-bottom:1px solid var(--paper-line);}
 .method-line{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:17px;line-height:1.5;color:var(--navy);border-left:2px solid var(--copper);padding-left:18px;margin-bottom:16px;}
@@ -727,6 +727,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .fc-chip.active{border-color:var(--gold);background:rgba(200,169,110,0.18);color:var(--gold-bright);font-weight:700;}
 /* Tactile press feedback on tappable selectors */
 .fc-chip:active,.band-btn:active{transform:scale(0.97);}
+/* Accessibility: visible keyboard focus ring on all interactive controls (gold, on-brand) */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible,.fac-opt:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px;}
 /* Progressive-disclosure field reveal (count block, location block) */
 @keyframes fieldReveal{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .field-revealing{animation:fieldReveal 0.36s cubic-bezier(0.22,1,0.36,1) both;}
@@ -2581,7 +2583,7 @@ var STRINGS = {
     sigEquipLabel: "How we keep this honest",
     sigEquipText: "Below about $1,500 a month per facility, a full done-for-you installation will not pay for itself, and we will not put you into a program that does not. The better path at this level is equipment only, with guided self-installation. You still capture the savings. You handle the install, and we stay on call for the questions.",
     sigTurnkeyLabel: "How we structure turnkey work",
-    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" at about "+spendPhrase+" a month per facility. That's the scale our full done-for-you program is built for — we handle the entire install, start to finish. This one looks built for you."; },
+    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" at about "+spendPhrase+" a month per facility. That's the scale our full done-for-you program is built for, and we handle the entire install, start to finish. This one looks built for you."; },
     sigFitSingleText: "A single facility at $5,000 a month or more justifies full turnkey on its own. No portfolio required.",
     sigWarmText: function(tierMin){ return "We can absolutely start where you are. Worth knowing that our full turnkey economics get strongest across roughly "+tierMin+" or more facilities at your spend level, or on a single site above $5,000 a month. We'll find the right structure on the call."; },
     // Portfolio result
@@ -2596,7 +2598,7 @@ var STRINGS = {
     equip3: "We almost never recommend wholesale replacement. The ROI on a targeted retrofit is almost always better, and your existing equipment is usually worth saving.",
     equip4: "If you find a better solution, we will pay you a finder's fee for the introduction.",
     equipGuarantee: "The savings estimate above is yours to keep, no card required. When you are ready to spec the equipment, we will help you get it right.",
-    equipCtaNote: "Ready when you are — send a text and we'll help you spec the right hardware for your facility.",
+    equipCtaNote: "Ready when you are: send a text and we'll help you spec the right hardware for your facility.",
     equipCtaAction: "Text us about the do-it-yourself program",
     smsDiyMsg: function(facLabel,countPhrase,spendMo){ return "Hi — I'm interested in your energy savings do-it-yourself program. I run a "+facLabel+(countPhrase?" — "+countPhrase:"")+(spendMo?", around "+spendMo+"/mo per facility on power":"")+". (Equipment-only / DIY)"; },
     // Dynamic render strings
@@ -2757,7 +2759,7 @@ var STRINGS = {
     sigEquipLabel: "Cómo mantenemos esto honesto",
     sigEquipText: "Por debajo de unos $1,500 al mes por instalación, una instalación completa llave en mano no se paga sola, y no lo pondremos en un programa que no lo haga. El mejor camino a este nivel es solo equipo, con autoinstalación guiada. Usted captura los ahorros igual. Usted maneja la instalación, y nosotros quedamos disponibles para las preguntas.",
     sigTurnkeyLabel: "Cómo estructuramos el trabajo llave en mano",
-    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" a unos "+spendPhrase+" al mes por instalación. Esa es la escala para la que está hecho nuestro programa completo llave en mano — nos encargamos de toda la instalación, de principio a fin. Esto parece hecho para usted."; },
+    sigFitText: function(countPhrase,spendPhrase){ return countPhrase+" a unos "+spendPhrase+" al mes por instalación. Esa es la escala para la que está hecho nuestro programa completo llave en mano, y nos encargamos de toda la instalación, de principio a fin. Esto parece hecho para usted."; },
     sigFitSingleText: "Una sola instalación a $5,000 al mes o más justifica el programa completo llave en mano por sí sola. No se requiere portafolio.",
     sigWarmText: function(tierMin){ return "Por supuesto podemos empezar donde usted está. Vale la pena saber que la economía de nuestro programa completo llave en mano es más fuerte a partir de aproximadamente "+tierMin+" o más instalaciones a su nivel de gasto, o en una sola instalación por encima de $5,000 al mes. Encontraremos la estructura correcta en la llamada."; },
     // Portfolio result
@@ -2772,7 +2774,7 @@ var STRINGS = {
     equip3: "Casi nunca recomendamos el reemplazo total. El ROI de una modernización dirigida casi siempre es mejor, y su equipo existente generalmente vale la pena conservarlo.",
     equip4: "Si encuentra una mejor solución, le pagaremos una comisión por la presentación.",
     equipGuarantee: "La estimación de ahorro de arriba es suya, sin tarjeta requerida. Cuando esté listo para especificar el equipo, le ayudaremos a hacerlo bien.",
-    equipCtaNote: "Cuando esté listo — envíenos un mensaje y le ayudaremos a especificar el hardware correcto para su instalación.",
+    equipCtaNote: "Cuando esté listo: envíenos un mensaje y le ayudaremos a especificar el hardware correcto para su instalación.",
     equipCtaAction: "Envíenos un mensaje sobre el programa 'hágalo usted mismo'",
     smsDiyMsg: function(facLabel,countPhrase,spendMo){ return "Hola — me interesa su programa de ahorro de energía 'hágalo usted mismo'. Tengo un "+facLabel+(countPhrase?" — "+countPhrase:"")+(spendMo?", alrededor de "+spendMo+"/mes por instalación en electricidad":"")+". (Solo equipo / DIY)"; },
     // Dynamic render strings
