@@ -152,7 +152,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .result-label{font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--copper-light);margin-bottom:8px;display:flex;align-items:center;gap:9px;}
 .result-label::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--verified-light);box-shadow:0 0 0 3px rgba(90,155,138,0.2);}
 .result-preamble{font-family:'Barlow',sans-serif;font-size:clamp(14px,2vw,16px);color:rgba(255,255,255,0.62);line-height:1.5;margin-bottom:14px;letter-spacing:0.01em;}
-.result-range{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+.result-range{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px;position:relative;}
 .result-num{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(28px,6vw,44px);line-height:1;color:#fff;letter-spacing:-0.01em;}
 .result-to{font-family:'Barlow',sans-serif;font-size:14px;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:0.03em;text-transform:uppercase;}
 .result-pcts{font-family:'Barlow',sans-serif;font-size:14px;color:var(--copper-pale);margin-bottom:6px;}
@@ -649,6 +649,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 }
 .result-num.counting{animation:numGlowBurst 1.4s ease-out both;}
 .result-num.settled{animation:numGlowPulse 6s ease-in-out infinite;}
+/* "Struck" — one gold light sweep across the figure the moment it settles (minted, not flashy) */
+@keyframes resultStrike{from{transform:skewX(-14deg) translateX(-200%);}to{transform:skewX(-14deg) translateX(320%);}}
+.result-range.struck::after{content:'';position:absolute;top:-15%;left:0;height:130%;width:55%;background:linear-gradient(105deg,transparent 25%,rgba(200,169,110,0.22) 50%,transparent 75%);transform:skewX(-14deg) translateX(-200%);pointer-events:none;animation:resultStrike 0.85s cubic-bezier(0.22,1,0.36,1) forwards;}
 
 /* ── AMBIENT GRID PULSE on dark background ── */
 @keyframes gridPulse{
@@ -4425,6 +4428,11 @@ function animateCountUp(){
       el.textContent=finalText;
       el.classList.remove('counting');
       el.classList.add('settled');
+      // Delight: one gold light-sweep across the figure as the last number locks in
+      if(id==='r-ceil'){
+        var _rg=document.querySelector('#result-block .result-range');
+        if(_rg){ _rg.classList.remove('struck'); void _rg.offsetWidth; _rg.classList.add('struck'); }
+      }
     }
     })(performance.now());
   });
@@ -4523,6 +4531,14 @@ function initAmbientCanvas(){
   initAmbientCanvas();
   checkS2Ready();
   applyStrings();
+  // Quiet signature for the curious who open the console
+  try{
+    console.log("%cEnergy Plus%c  Savings Estimator",
+      "font:700 20px Georgia,serif;color:#c8a96e;",
+      "color:#8a7a62;font:italic 13px Georgia,serif;");
+    console.log("%cBuilt on DOE and EIA consumption data. Conservative by design: the verified number should beat this estimate.\nCurious how it holds up for your facility? Text +1 864-777-0688.",
+      "color:#9a8a72;font-size:12px;line-height:1.6;");
+  }catch(e){}
 })();
 
 // ── SLIDER --pct FILL ────────────────────────────────────────────────────
