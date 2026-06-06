@@ -717,6 +717,16 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .fc-chip:hover::after{left:160%;}
 .fc-chip:hover{border-color:var(--gold);background:rgba(200,169,110,0.11);box-shadow:0 0 14px rgba(200,169,110,0.2);}
 .fc-chip.active{border-color:var(--gold);background:rgba(200,169,110,0.18);color:var(--gold-bright);font-weight:700;}
+/* Tactile press feedback on tappable selectors */
+.fc-chip:active,.band-btn:active{transform:scale(0.97);}
+/* Progressive-disclosure field reveal (count block, location block) */
+@keyframes fieldReveal{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.field-revealing{animation:fieldReveal 0.36s cubic-bezier(0.22,1,0.36,1) both;}
+/* Accessibility: honor reduced-motion — resolve all motion to final state instantly */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;animation-delay:0ms!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}
+  #ambient-canvas{display:none!important;}
+}
 /* ── SIGNAL BOX ── */
 .signal-box{margin-top:16px;padding:14px 16px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.28);border-left:3px solid var(--copper);animation:bandShimmer 0.35s cubic-bezier(0.22,1,0.36,1) both;}
 .signal-box-label{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--copper-pale);margin-bottom:7px;}
@@ -2122,6 +2132,9 @@ var state = {
   count:1, countKey:"one", countLabel:"", resultSummary:null
 };
 
+// Honor the user's reduced-motion preference for JS-driven motion (typewriter, count-ups, sparks, canvas).
+var REDUCE_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
 // ── EQUIPMENT-ONLY CTA CONFIG ──
 // mode: "sms" = text link w/ dynamic DIY body | "link" = URL | "note" = static text
 var EQUIP_ONLY_CTA = { mode:"sms", link:"" };
@@ -2209,6 +2222,7 @@ function compute(){
 var _cuGen={};
 function countUp(el,target,dur){
   if(!el)return;
+  if(REDUCE_MOTION){ el.textContent=fmtFull(target); return; }
   var key=el.id||'x';
   _cuGen[key]=(_cuGen[key]||0)+1;
   var gen=_cuGen[key];
@@ -3207,6 +3221,13 @@ function onAdjust(){
 /* ── TYPEWRITER ────────────────────────────────────────────────────────── */
 var _twRunning=false;
 function typeWriter(el,line1,line2){
+  if(REDUCE_MOTION){
+    _twRunning=false; el.innerHTML='';
+    var sp0=document.createElement('span'); sp0.textContent=line1; el.appendChild(sp0);
+    el.appendChild(document.createElement('br'));
+    var em0=document.createElement('em'); em0.textContent=line2; em0.style.display='block'; em0.style.marginTop='4px'; el.appendChild(em0);
+    return;
+  }
   _twRunning=true;
   el.innerHTML='';
   var sp=document.createElement('span');
@@ -3256,6 +3277,7 @@ function setResultTitleFinal(){
 
 /* ── AMBIENT SPARKS ────────────────────────────────────────────────────── */
 function createSparks(){
+  if(REDUCE_MOTION)return;
   var inner=document.querySelector('#result-block .result-inner');
   if(!inner||document.getElementById('sparks-cont'))return;
   inner.style.position='relative';
@@ -3631,13 +3653,18 @@ function selectFacCount(fc){
   checkS2Ready();
 }
 // Progressive reveal in Stage 2: count appears after spend, location after count.
+function _revealField(el,show){
+  if(!el) return;
+  var wasHidden=(el.style.display==='none')||getComputedStyle(el).display==='none';
+  el.style.display=show?'':'none';
+  if(show&&wasHidden&&!REDUCE_MOTION){
+    el.classList.remove('field-revealing'); void el.offsetHeight; el.classList.add('field-revealing');
+  }
+}
 function updateS2Disclosure(){
-  var fcb=document.getElementById('fac-count-block');
-  var loc=document.getElementById('s2-location-block');
-  var spendDone=state.spend>0;
-  var countDone=state.count>0;
-  if(fcb) fcb.style.display=spendDone?'':'none';
-  if(loc) loc.style.display=(spendDone&&countDone)?'':'none';
+  var spendDone=state.spend>0, countDone=state.count>0;
+  _revealField(document.getElementById('fac-count-block'), spendDone);
+  _revealField(document.getElementById('s2-location-block'), spendDone&&countDone);
 }
 function countPhrase(){
   var S=STRINGS[state.lang]||STRINGS.en;
@@ -3663,6 +3690,8 @@ function updateSignalBox(){
     txt.textContent=S.sigWarmText(fs.tier.min);
   }
   box.style.display='';
+  // Replay the entrance so the box visibly acknowledges an updated spend/count selection.
+  if(!REDUCE_MOTION){ box.style.animation='none'; void box.offsetHeight; box.style.animation=''; }
 }
 // ── RESULT PATHWAY (turnkey vs equipment-only) ────────────────────────────
 function renderEquipCta(){
@@ -4276,6 +4305,7 @@ function animateCountUp(){
   ids.forEach(function(id,i){
     var el=document.getElementById(id);
     if(!el) return;
+    if(REDUCE_MOTION){ el.classList.remove("counting"); el.classList.add("settled"); return; }
     // Read the final value render() already set silently
     var finalText=el.textContent||"$0";
     var target=0;
@@ -4326,6 +4356,7 @@ function stopWaitingTicker(){
 
 /* ── AMBIENT PARTICLE CANVAS ─────────────────────────────────────── */
 function initAmbientCanvas(){
+  if(REDUCE_MOTION)return;
   var wrap=document.getElementById('c-wrap');
   if(!wrap||document.getElementById('ambient-canvas')) return;
   var canvas=document.createElement('canvas');
