@@ -1346,12 +1346,12 @@ body{font-size:17px;}
       <!-- One last question: current heating type (US + MX) -->
       <div id="heat-q-wrap" style="margin-top:24px;">
         <div class="c-field-lbl" id="t-heat-q-lbl">One last question: how does your facility heat today?</div>
-        <div class="c-field-sub" id="t-heat-q-sub">This sharpens your estimate. Not sure? Choose "I'm not sure" and we'll keep it conservative.</div>
+        <div class="c-field-sub" id="t-heat-q-sub">This sharpens your estimate. If you heat with gas you'd know, it's a separate bill, so when in doubt we assume electric heat.</div>
         <div class="fac-count-grid" id="heat-q-chips">
           <button class="fc-chip" type="button" data-heat="gas" onclick="setHeating('gas')" id="t-heat-gas">Natural gas</button>
           <button class="fc-chip" type="button" data-heat="heatpump" onclick="setHeating('heatpump')" id="t-heat-hp">Heat pump</button>
           <button class="fc-chip" type="button" data-heat="resistance" onclick="setHeating('resistance')" id="t-heat-res">Electric resistance</button>
-          <button class="fc-chip" type="button" data-heat="dontknow" onclick="setHeating('dontknow')" id="t-heat-dk">I'm not sure</button>
+          <button class="fc-chip active" type="button" data-heat="dontknow" onclick="setHeating('dontknow')" id="t-heat-dk">I'm not sure</button>
         </div>
       </div>
       <div class="c-nav-row">
@@ -2131,17 +2131,17 @@ var HEAT = { heatpump:0.50, resistance:0.80 };
 
 var state = {
   country:"us", lang:"en",
-  selected:false, hasElecHeat:false, sqft:0, hasAnimated:false,
+  selected:false, hasElecHeat:true, sqft:0, hasAnimated:false,
   spend:0, hvacShare:0.40, harmoRate:0.09,
   stateCool:50, coolMin:0, coolShare:0.50,
-  view:"s0", tCool:true, tHeat:false, tDem:true, tLit:true, litMode:"offgrid", tMot:false, tNego:false,
-  heatComp:"heatpump",
+  view:"s0", tCool:true, tHeat:true, tDem:true, tLit:true, litMode:"offgrid", tMot:false, tNego:false,
+  heatComp:"resistance",
   demRate:12, demPortion:0.40, demRed:0.05, demBattery:false,
   // Mexico-specific
   mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50,
   // Facility count / portfolio — defaults to a single facility
   count:1, countKey:"one", countLabel:"", resultSummary:null,
-  heatChoice:"" // gas | heatpump | resistance | dontknow (Stage 3 question)
+  heatChoice:"dontknow" // gas | heatpump | resistance | dontknow (Stage 3 question); default assumes electric heat
 };
 
 // Honor the user's reduced-motion preference for JS-driven motion (typewriter, count-ups, sparks, canvas).
@@ -2497,7 +2497,7 @@ var STRINGS = {
     next: "Next",
     s3179dAsk: "Adjust your estimated square footage to calculate your Section 179D deduction",
     heatQLbl: "One last question: how does your facility heat today?",
-    heatQSub: "This sharpens your estimate. Not sure? Choose \"I'm not sure\" and we'll keep it conservative.",
+    heatQSub: "This sharpens your estimate. If you heat with gas you'd know, it's a separate bill, so when in doubt we assume electric heat.",
     heatOptGas: "Natural gas",
     heatOptHp: "Heat pump",
     heatOptRes: "Electric resistance",
@@ -2673,7 +2673,7 @@ var STRINGS = {
     next: "Siguiente",
     s3179dAsk: "Ajuste los metros cuadrados estimados para calcular su deducción del Artículo 179D",
     heatQLbl: "Una última pregunta: ¿cómo calienta su instalación actualmente?",
-    heatQSub: "Esto afina su estimación. ¿No está seguro? Elija \"No estoy seguro\" y lo mantendremos conservador.",
+    heatQSub: "Esto afina su estimación. Si calienta con gas lo sabría, es una factura aparte, así que en caso de duda asumimos calefacción eléctrica.",
     heatOptGas: "Gas natural",
     heatOptHp: "Bomba de calor",
     heatOptRes: "Resistencia eléctrica",
@@ -3231,14 +3231,14 @@ function toggleStream(which){
   render();
 }
 function setHeatComp(c){ state.heatComp=c; document.querySelectorAll(".hc-btns button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-comp")===c); }); render(); }
-// Stage 3 "how do you heat today?" — sets the heating baseline. "I'm not sure" stays conservative
-// (heatpump baseline, heating savings off) so it does not inflate the estimate.
+// Stage 3 "how do you heat today?" — sets the heating baseline. "I'm not sure" assumes electric
+// resistance: gas is a separate bill (they'd know), so unknown almost always means electric heat.
 function setHeating(type){
   state.heatChoice=type;
   if(type==='gas'){ state.heatComp='gas'; state.tHeat=false; state.hasElecHeat=false; }
   else if(type==='heatpump'){ state.heatComp='heatpump'; state.tHeat=true; state.hasElecHeat=true; }
   else if(type==='resistance'){ state.heatComp='resistance'; state.tHeat=true; state.hasElecHeat=true; }
-  else { state.heatComp='heatpump'; state.tHeat=false; state.hasElecHeat=false; } // dontknow → conservative neutral
+  else { state.heatComp='resistance'; state.tHeat=true; state.hasElecHeat=true; } // dontknow → assume electric resistance
   document.querySelectorAll('#heat-q-chips .fc-chip').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-heat')===type); });
   document.querySelectorAll('.hc-btns button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-comp')===state.heatComp); });
   var hs=document.getElementById('ss-heat'); if(hs) hs.style.display=state.tHeat?'':'none';
