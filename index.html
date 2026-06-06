@@ -1185,6 +1185,11 @@ body{font-size:17px;}
           <span class="country-name">México</span>
           <span class="country-sub">Tarifa CFE — todas las regiones</span>
         </div>
+        <div class="country-opt" data-country="ca" onclick="selectCountry('ca')">
+          <svg class="fac-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.8L19 7l-3 3 1 5-5-2.6L7 15l1-5-3-3 4.6-.2z"/><line x1="12" y1="15" x2="12" y2="22"/></svg>
+          <span class="country-name" id="t-ca-name">Canada</span>
+          <span class="country-sub" id="t-ca-sub">ON, QC, MB, SK — more provinces soon</span>
+        </div>
       </div>
     </div>
 
@@ -1327,6 +1332,35 @@ body{font-size:17px;}
             </div>
           </div>
         </div>
+        <div id="s2-ca-location" style="display:none">
+          <div class="c-field-lbl" id="t-ca-prov-lbl">Province <span id="c2-ca-split" class="c-field-aside"></span></div>
+          <div class="sel-wrap">
+            <select id="c2-ca-province" onchange="c2CaProvince()">
+              <option value="" disabled selected id="t-ca-prov-placeholder">Select your province</option>
+            </select>
+          </div>
+          <div class="mx-assumption-chip" id="ca-region-chip" style="display:none">
+            <div class="mx-chip-content">
+              <span class="mx-chip-label" id="t-ca-region-chip-lbl">Auto-generated assumption:</span>
+              <span id="ca-region-chip-text"></span>
+            </div>
+            <button class="mx-chip-edit" id="t-ca-region-edit-btn" onclick="toggleCaRegionEdit()">Edit ▾</button>
+          </div>
+          <div class="mx-assumption-edit" id="ca-region-edit" style="display:none">
+            <div class="mx-edit-row">
+              <label id="t-ca-cool-lbl">Cooling share of HVAC</label>
+              <div class="mx-slider-wrap">
+                <input type="range" id="ca-cool-slider" class="rng" min="5" max="60" value="22" oninput="onCaCoolSlider()">
+                <span id="ca-cool-pct" class="mx-slider-val">22%</span>
+              </div>
+            </div>
+          </div>
+          <div class="signal-box" id="ca-coming-soon" style="display:none">
+            <div class="signal-box-label" id="t-ca-cs-heading">Expanding across Canada</div>
+            <div class="signal-box-text" id="t-ca-cs-body">The estimator is live in Ontario, Québec, Manitoba, and Saskatchewan, and rolling out to more provinces. Tell us about your facility and we'll reach out when we reach you.</div>
+            <a class="txt-cta-btn rn-equip-btn" id="ca-cs-cta" style="margin-top:12px;" href="#"><span class="txt-cta-ico">&#128241;</span> <span id="t-ca-cs-cta">Get on the list</span></a>
+          </div>
+        </div>
       </div>
 
       <div class="c-nav-row">
@@ -1353,6 +1387,17 @@ body{font-size:17px;}
       </div>
       </div>
       <div class="c-ded-result" id="c-ded-result"></div>
+      <!-- Canada incentive note (replaces US Section 179D) -->
+      <div id="ca-incentives" style="display:none;">
+        <span class="c-ask" id="t-ca-inc-heading">Canadian incentives that can offset the equipment cost</span>
+        <div class="heat-q-sub" id="t-ca-inc-sub" style="max-width:60ch;">Federal and provincial programs commonly cover a meaningful share of an efficiency retrofit. We confirm exactly what applies to your equipment on the review.</div>
+        <div class="rn-bridge" style="margin-top:14px;">
+          <p class="rn-bridge-p"><strong id="t-ca-inc1-lbl">Accelerated depreciation (CCA Class 43.1/43.2).</strong> <span id="t-ca-inc1-txt">Eligible energy-efficiency and clean-energy equipment qualifies for accelerated capital cost allowance, so you write the investment off against income faster than ordinary equipment. Your accountant confirms the schedule that applies.</span></p>
+          <p class="rn-bridge-p"><strong id="t-ca-inc2-lbl">Clean Technology Investment Tax Credit.</strong> <span id="t-ca-inc2-txt">The federal Clean Technology ITC is a refundable credit of up to 30% of the cost of eligible clean-technology equipment, including qualifying heat pumps and energy storage. The exact rate depends on the equipment and its in-service date.</span></p>
+          <p class="rn-bridge-p"><strong id="t-ca-inc3-lbl">Provincial rebate programs.</strong> <span id="t-ca-inc3-txt">Most provinces run their own efficiency rebates (for example Save on Energy in Ontario, BC Hydro incentives, and Efficiency Nova Scotia). These stack on top of the federal measures and vary by utility.</span></p>
+        </div>
+        <div class="heat-q-sub" id="t-ca-inc-defer" style="max-width:60ch;margin-top:6px;">We map the specific incentives to your equipment on the facility review. The above is not tax advice; your accountant confirms what applies to you.</div>
+      </div>
       <!-- One last question: current heating type (US + MX) -->
       <div id="heat-q-wrap">
         <span class="c-ask heat-q-lbl" id="t-heat-q-lbl">One last question: how does your facility heat today?</span>
@@ -2105,6 +2150,42 @@ function escalFactor(rate,years){
   if(!rate) return years;
   return (Math.pow(1+rate,years)-1)/rate;
 }
+// ── CANADA (launch set: Ontario, Quebec, Manitoba, Saskatchewan) ──────────────
+// cool = cooling % of HVAC (US-scale calibration, editable). demPortion = engine
+// default 0.40. esc = ESC_DATA key. market drives the rate-negotiation stream. pf
+// = power-factor penalty present (all four launch provinces). Heating handled by
+// the Stage-3 question (default electric resistance, heating-dominant).
+var CA_PROV = {
+  "Ontario":      {cool:30, demPortion:0.40, esc:"ca-on", market:"competitive", pf:true, desc:"30% cooling · winter-peaking · demand + 0.90 power-factor charges"},
+  "Quebec":       {cool:22, demPortion:0.40, esc:"ca-qc", market:"regulated",   pf:true, desc:"22% cooling · heating-dominant · low-PF adjustment below 0.90"},
+  "Manitoba":     {cool:22, demPortion:0.40, esc:"ca-mb", market:"regulated",   pf:true, desc:"22% cooling · heating-dominant · demand billed on kVA"},
+  "Saskatchewan": {cool:22, demPortion:0.40, esc:"ca-sk", market:"regulated",   pf:true, desc:"22% cooling · heating-dominant · demand billed on kVA"}
+};
+// Full list for the dropdown; provinces NOT in CA_PROV show the "expanding" message.
+var CA_ALL = ["Ontario","Quebec","Manitoba","Saskatchewan","British Columbia","Alberta",
+  "Nova Scotia","New Brunswick","Newfoundland & Labrador","Prince Edward Island",
+  "Yukon","Northwest Territories","Nunavut"];
+ESC_TIER["Ontario"]="ca-on"; ESC_TIER["Quebec"]="ca-qc"; ESC_TIER["Manitoba"]="ca-mb"; ESC_TIER["Saskatchewan"]="ca-sk";
+ESC_DATA["ca-on"]={range:"~3.5%/yr",rate:0.035,note:"Ontario commercial rates have climbed under the OEB incentive-rate framework and a volatile Global Adjustment commodity; this projection is conservative."};
+ESC_DATA["ca-qc"]={range:"~2.8%/yr",rate:0.028,note:"Hydro-Québec business rates have tracked near inflation, with a 5.1% business increase in 2024. Conservative projection."};
+ESC_DATA["ca-mb"]={range:"~2.8%/yr",rate:0.028,note:"Manitoba Hydro increases (3.6% 2022, 1% 2023, 1% 2024) reflect ongoing cost recovery; conservative projection."};
+ESC_DATA["ca-sk"]={range:"~2.0%/yr",rate:0.020,note:"SaskPower increases have been infrequent (4% 2022, 4% 2023); conservative projection."};
+function isCA(){ return state.country==="ca"; }
+function caIsLive(name){ return !!CA_PROV[name]; }
+// Canada English copy: swap US agency references to Canadian equivalents.
+function caLocalize(){
+  if(!isCA()) return;
+  function swap(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.innerHTML = el.innerHTML
+      .replace(/the DOE/g,'NRCan')
+      .replace(/DOE and EIA/g,'NRCan and Statistics Canada')
+      .replace(/\bDOE\b/g,'NRCan')
+      .replace(/\bEIA\b/g,'Statistics Canada')
+      .replace(/\bCBECS\b/g,'SCIEU');
+  }
+  ['t-s1-doe','t-rn-cred','t-adj-note'].forEach(swap);
+}
 var SQFT_RATE = {
   cold:3.20, super:8.00, cstore:10.00, hotel:3.50, health:4.50,
   fitness:3.20, edu:2.50, multi:1.40, qsr:5.50, office:2.80,
@@ -2149,6 +2230,8 @@ var state = {
   demRate:12, demPortion:0.40, demRed:0.05, demBattery:false,
   // Mexico-specific
   mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50,
+  // Canada-specific
+  caProvince:"", caPFActive:false, caPFShare:0.05, caLiveProvince:false,
   // Facility count / portfolio — defaults to a single facility
   count:1, countKey:"one", countLabel:"", resultSummary:null,
   heatChoice:"dontknow" // gas | heatpump | resistance | dontknow (Stage 3 question); default assumes electric heat
@@ -2242,8 +2325,10 @@ function compute(){
   var demPool  = state.demPortion * state.spend;
   var combDemCeil = Math.min(demCeil + motCeil, demPool);
   var combDemFloor = demFloor + motFloor;
-  var pfFloor = (state.country==="mx"&&state.mxPFActive) ? state.mxPFShare * state.spend * 0.60 : 0;
-  var pfCeil  = (state.country==="mx"&&state.mxPFActive) ? state.mxPFShare * state.spend * 0.90 : 0;
+  var _pfOn = (state.country==="mx"&&state.mxPFActive) || (state.country==="ca"&&state.caPFActive);
+  var _pfShare = state.country==="ca" ? state.caPFShare : state.mxPFShare;
+  var pfFloor = _pfOn ? _pfShare * state.spend * 0.60 : 0;
+  var pfCeil  = _pfOn ? _pfShare * state.spend * 0.90 : 0;
   return {harmo:harmo,coolFloor:coolFloor,coolCeil:coolCeil,heatFloor:heatFloor,heatCeil:heatCeil,
     demFloor:demFloor,demCeil:demCeil,motFloor:motFloor,motCeil:motCeil,
     litFloor:litFloor,litCeil:litCeil,
@@ -2352,7 +2437,7 @@ function render(){
     if(_pfDefer) _pfDefer.style.display="none";
     if(_perfacBlock) _perfacBlock.style.display="none";
   }
-  if(state.view==="result"){ buildResultSummary(); applyPathway(); }
+  if(state.view==="result"){ buildResultSummary(); applyPathway(); caLocalize(); }
   // Mexico: show peso equivalent below savings numbers (matches hero figure)
   var _pesoLine = document.getElementById("r-peso-line");
   if(state.country==="mx" && _pesoLine && state.spend>0){
@@ -2360,7 +2445,7 @@ function render(){
     _pesoLine.textContent = "MXN $" + Math.round(_heroFloor*fx).toLocaleString("en-US") + " – MXN $" + Math.round(_heroCeil*fx).toLocaleString("en-US") + " pesos anuales";
     _pesoLine.style.display="";
   } else if(_pesoLine){ _pesoLine.style.display="none"; }
-  var _sName=(document.getElementById("state-select")||{}).value||"";
+  var _sName=isCA()?state.caProvince:(isMX()?state.mxRegion:((document.getElementById("state-select")||{}).value||""));
   var _tier=(_sName&&ESC_TIER[_sName])||3;
   var _ed=ESC_DATA[_tier];
   var _e5=escalFactor(_ed.rate,5);
@@ -2379,6 +2464,8 @@ function render(){
     var SL=STRINGS[state.lang]||STRINGS.en;
     if(isMX()){
       _rateNote.innerHTML=SL.mxRateNote.replace("\n","<br>");
+    } else if(isCA()){
+      _rateNote.innerHTML=(_ed.note||"");
     } else if(_sName==="Puerto Rico"){
       _rateNote.innerHTML=SL.prRateNote.replace("\n","<br>");
     } else {
@@ -2957,7 +3044,7 @@ function applyStrings(){
   // Stage 2
   var s2a=document.getElementById("t-s2-ask"); if(s2a) s2a.textContent=S.s2Ask;
   var s2sl=document.getElementById("t-s2-spend-lbl");
-  if(s2sl){ var mo=document.getElementById("c2-mo"); s2sl.innerHTML=S.s2SpendLbl+(mo?" <span id='c2-mo' class='c-field-aside'>"+mo.textContent+"</span>":""); }
+  if(s2sl){ var mo=document.getElementById("c2-mo"); s2sl.innerHTML=S.s2SpendLbl+(isCA()?" <span class='c-field-aside'>(CAD)</span>":"")+(mo?" <span id='c2-mo' class='c-field-aside'>"+mo.textContent+"</span>":""); }
   var nb=document.getElementById("t-narrow");
   if(nb){ var rr=document.getElementById("band-refine-range"); nb.innerHTML=S.narrowIt+(rr?" <span id='band-refine-range' class='band-refine-range'>"+rr.textContent+"</span>":""); }
   var cr=document.getElementById("t-change-range"); if(cr) cr.textContent=S.changeRange;
@@ -3019,6 +3106,7 @@ function applyStrings(){
     if(state.view==="s3"||state.view==="result") updateClaimS3();
   }
   if(state.view==="result"){ setResultTitleFinal(); render(); }
+  caLocalize();
   var mxttl=document.getElementById("t-mx-tariff-top-lbl"); if(mxttl) mxttl.textContent=S.mxTariffTopLabel||S.mxTariffLabel;
   // Adjust panel rate-row labels
   var ll=[["t-lbl-harmo","lblHarmo"],["t-lbl-hvac","lblHvac"],["t-lbl-cool","lblCool"],
@@ -3093,9 +3181,10 @@ function isMX(){ return state.country==="mx"; }
 
 function selectCountry(c){
   state.country=c;
-  // Auto-switch language
+  // Auto-switch language (Canada = English for v1; French deferred)
   if(c==="mx") setLang("es");
   else setLang("en");
+  if(c==="ca") populateCaProvinces();
   document.querySelectorAll(".country-opt").forEach(function(el){
     el.classList.toggle("active", el.getAttribute("data-country")===c);
   });
@@ -3204,6 +3293,63 @@ function setMxHeat(active){
   });
   var hs=document.getElementById("ss-heat"); if(hs) hs.style.display=active?"":"none";
   render();
+}
+
+// ── CANADA wiring ─────────────────────────────────────────────────────────────
+function populateCaProvinces(){
+  var sel=document.getElementById("c2-ca-province"); if(!sel) return;
+  if(sel.options.length>1) return; // already populated
+  CA_ALL.forEach(function(name){
+    var o=document.createElement("option"); o.value=name;
+    o.textContent=name + (caIsLive(name)?"":"  (coming soon)");
+    sel.appendChild(o);
+  });
+}
+function c2CaProvince(){
+  var sel=document.getElementById("c2-ca-province"); if(!sel) return;
+  var name=sel.value; if(!name) return;
+  state.caProvince=name;
+  var chip=document.getElementById("ca-region-chip");
+  var edit=document.getElementById("ca-region-edit");
+  var cs=document.getElementById("ca-coming-soon");
+  if(!caIsLive(name)){
+    state.caLiveProvince=false;
+    if(chip) chip.style.display="none";
+    if(edit) edit.style.display="none";
+    if(cs) cs.style.display="";
+    checkS2Ready();
+    return;
+  }
+  state.caLiveProvince=true;
+  if(cs) cs.style.display="none";
+  var d=CA_PROV[name];
+  state.stateCool=d.cool; recomputeCool();
+  state.demPortion=d.demPortion;
+  state.caPFActive=!!d.pf; state.caPFShare=0.05;
+  state.tNego=(d.market==="competitive");
+  var coolEl=document.getElementById("r-cool"); if(coolEl) coolEl.value=Math.round(state.coolShare*100);
+  var sld=document.getElementById("ca-cool-slider"); if(sld){ sld.value=d.cool; sld.style.setProperty("--pct",((d.cool-5)/(60-5)*100)+"%"); }
+  var cp=document.getElementById("ca-cool-pct"); if(cp) cp.textContent=d.cool+"%";
+  var chipText=document.getElementById("ca-region-chip-text"); if(chipText) chipText.textContent=d.desc;
+  if(chip) chip.style.display="flex";
+  var sp=document.getElementById("c2-ca-split"); if(sp) sp.textContent=d.cool+"% cooling";
+  var rdp=document.getElementById("r-demportion"); if(rdp) rdp.value=Math.round(state.demPortion*100);
+  var ns=document.getElementById("ss-nego"); if(ns) ns.style.display=state.tNego?"block":"none";
+  var pfRow=document.getElementById("ss-pf"); if(pfRow) pfRow.style.display=state.caPFActive?"":"none";
+  render(); checkS2Ready();
+}
+function onCaCoolSlider(){
+  var sl=document.getElementById("ca-cool-slider"); if(!sl) return;
+  var v=parseInt(sl.value);
+  state.stateCool=v; recomputeCool();
+  var coolEl=document.getElementById("r-cool"); if(coolEl) coolEl.value=Math.round(state.coolShare*100);
+  var cp=document.getElementById("ca-cool-pct"); if(cp) cp.textContent=v+"%";
+  var chipText=document.getElementById("ca-region-chip-text"); if(chipText) chipText.textContent=v+"% cooling (adjusted)";
+  render();
+}
+function toggleCaRegionEdit(){
+  var ed=document.getElementById("ca-region-edit");
+  if(ed) ed.style.display=(ed.style.display===""||ed.style.display==="block")?"none":"";
 }
 
 function updateNegoStream(stateName){
@@ -3453,8 +3599,10 @@ function goStage(v){
   // Country-aware location fields in Stage 2
   var usLoc=document.getElementById("s2-us-location");
   var mxLoc=document.getElementById("s2-mx-location");
-  if(usLoc) usLoc.style.display=isMX()?"none":"";
-  if(mxLoc) mxLoc.style.display=isMX()?"":"none";
+  var caLoc=document.getElementById("s2-ca-location");
+  if(usLoc) usLoc.style.display=(state.country==="us")?"":"none";
+  if(mxLoc) mxLoc.style.display=(state.country==="mx")?"":"none";
+  if(caLoc) caLoc.style.display=(state.country==="ca")?"":"none";
   // summary + title
   var cs=document.getElementById("c-summary"); if(cs) cs.style.display=isR?"":"none";
   var ctt=document.getElementById("calc-title");
@@ -3504,9 +3652,11 @@ function goStage(v){
     state.sqft=0; state._sqftEst=0;
     var _sl=document.getElementById("c-sqft"); if(_sl){ _sl.value=50; _sl.style.setProperty("--pct","50%"); }
     var _ded=document.getElementById("c-ded-result"); if(_ded) _ded.style.display="none";
-    // Hide 179D for Mexico
+    // Hide 179D for Mexico and Canada; Canada shows the CCA/ITC incentive note instead
     var sqftWrap=document.getElementById("c-sqft-wrap");
-    if(sqftWrap) sqftWrap.style.display=isMX()?"none":"";
+    if(sqftWrap) sqftWrap.style.display=(isMX()||isCA())?"none":"";
+    var caInc=document.getElementById("ca-incentives");
+    if(caInc) caInc.style.display=isCA()?"":"none";
     updateClaimS3();
   }
   if(isR){
@@ -3857,6 +4007,9 @@ function checkS2Ready(){
   var ready=false;
   if(isMX()){
     ready=state.mxRegion.length>0 && state.spend>0 && state.count>0;
+  } else if(isCA()){
+    // require a LIVE province (non-launch provinces show the expanding message, no calc)
+    ready=state.caProvince.length>0 && state.caLiveProvince && state.spend>0 && state.count>0;
   } else {
     var stateVal=(document.getElementById("c2-state")||{}).value||"";
     ready=stateVal.length>0 && state.spend>0 && state.count>0;
@@ -4062,7 +4215,7 @@ function updateClaimS3(){
   var nounES=ins?ins.noun:"instalación"; // reuse noun for now — good enough
 
   // Location context
-  var _s3sn=isMx?state.mxRegion:((document.getElementById("c2-state")||{}).value||"");
+  var _s3sn=isCA()?state.caProvince:(isMx?state.mxRegion:((document.getElementById("c2-state")||{}).value||""));
   var _s3tier=(_s3sn&&ESC_TIER[_s3sn])||3;
   var _s3ed=ESC_DATA[_s3tier];
 
@@ -4179,7 +4332,7 @@ function updateClaimS3(){
   buildSmsLinks();
 
   var _sliderWrap=document.getElementById("c-sqft-wrap");
-  if(isPR||isMx){
+  if(isPR||isMx||isCA()){
     if(_sliderWrap) _sliderWrap.style.display="none";
     var _ded=document.getElementById("c-ded-result"); if(_ded) _ded.style.display="none";
   } else {
@@ -4369,7 +4522,7 @@ function buildPrimaryCta(){
   var ins=INSIGHTS[state.selected];
   var noun=ins.noun;
   var spendAmt=state.spend>0?(", spending about "+fmtK(state.spend)+" per year on electricity,"):"";
-  var stateName=isMX()?state.mxRegion:((document.getElementById("state-select")||{}).value||"");
+  var stateName=isCA()?state.caProvince:(isMX()?state.mxRegion:((document.getElementById("state-select")||{}).value||""));
   var stateStr=stateName?" in "+stateName:"";
   var _smsVFn=(STRINGS[state.lang].smsVideoMsg||STRINGS.en.smsVideoMsg);
   var msg=_smsVFn(noun,stateStr,spendAmt);
@@ -4543,7 +4696,7 @@ function initAmbientCanvas(){
     console.log("%cEnergy Plus%c  Savings Estimator",
       "font:700 20px Georgia,serif;color:#c8a96e;",
       "color:#8a7a62;font:italic 13px Georgia,serif;");
-    console.log("%cBuilt on DOE and EIA consumption data. Conservative by design: the verified number should beat this estimate.\nCurious how it holds up for your facility? Text +1 864-777-0688.",
+    console.log("%cBuilt on national energy-agency consumption data. Conservative by design: the verified number should beat this estimate.\nCurious how it holds up for your facility? Text +1 864-777-0688.",
       "color:#9a8a72;font-size:12px;line-height:1.6;");
   }catch(e){}
 })();
