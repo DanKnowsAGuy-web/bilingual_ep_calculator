@@ -1343,6 +1343,17 @@ body{font-size:17px;}
       </div>
       </div>
       <div class="c-ded-result" id="c-ded-result"></div>
+      <!-- One last question: current heating type (US + MX) -->
+      <div id="heat-q-wrap" style="margin-top:24px;">
+        <div class="c-field-lbl" id="t-heat-q-lbl">One last question: how does your facility heat today?</div>
+        <div class="c-field-sub" id="t-heat-q-sub">This sharpens your estimate. Not sure? Choose "I'm not sure" and we'll keep it conservative.</div>
+        <div class="fac-count-grid" id="heat-q-chips">
+          <button class="fc-chip" type="button" data-heat="gas" onclick="setHeating('gas')" id="t-heat-gas">Natural gas</button>
+          <button class="fc-chip" type="button" data-heat="heatpump" onclick="setHeating('heatpump')" id="t-heat-hp">Heat pump</button>
+          <button class="fc-chip" type="button" data-heat="resistance" onclick="setHeating('resistance')" id="t-heat-res">Electric resistance</button>
+          <button class="fc-chip" type="button" data-heat="dontknow" onclick="setHeating('dontknow')" id="t-heat-dk">I'm not sure</button>
+        </div>
+      </div>
       <div class="c-nav-row">
         <button class="c-back-vis" id="t-s3-back" onclick="goStage('s2')">Back</button>
         <button class="c-next-btn c-nav-next" id="t-calculate-btn" onclick="showResult()">Calculate my savings now</button>
@@ -2129,7 +2140,8 @@ var state = {
   // Mexico-specific
   mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50,
   // Facility count / portfolio — defaults to a single facility
-  count:1, countKey:"one", countLabel:"", resultSummary:null
+  count:1, countKey:"one", countLabel:"", resultSummary:null,
+  heatChoice:"" // gas | heatpump | resistance | dontknow (Stage 3 question)
 };
 
 // Honor the user's reduced-motion preference for JS-driven motion (typewriter, count-ups, sparks, canvas).
@@ -2484,6 +2496,12 @@ var STRINGS = {
     s2Back: "Back",
     next: "Next",
     s3179dAsk: "Adjust your estimated square footage to calculate your Section 179D deduction",
+    heatQLbl: "One last question: how does your facility heat today?",
+    heatQSub: "This sharpens your estimate. Not sure? Choose \"I'm not sure\" and we'll keep it conservative.",
+    heatOptGas: "Natural gas",
+    heatOptHp: "Heat pump",
+    heatOptRes: "Electric resistance",
+    heatOptDk: "I'm not sure",
     s3Back: "Back",
     calculateBtn: "Calculate my savings now",
     calBtn: "Book Your 22-Minute Facility Review",
@@ -2654,6 +2672,12 @@ var STRINGS = {
     s2Back: "Atrás",
     next: "Siguiente",
     s3179dAsk: "Ajuste los metros cuadrados estimados para calcular su deducción del Artículo 179D",
+    heatQLbl: "Una última pregunta: ¿cómo calienta su instalación actualmente?",
+    heatQSub: "Esto afina su estimación. ¿No está seguro? Elija \"No estoy seguro\" y lo mantendremos conservador.",
+    heatOptGas: "Gas natural",
+    heatOptHp: "Bomba de calor",
+    heatOptRes: "Resistencia eléctrica",
+    heatOptDk: "No estoy seguro",
     s3Back: "Atrás",
     calculateBtn: "Calcular mis ahorros ahora",
     calBtn: "Reserve su Revisión de Instalación de 22 Minutos",
@@ -2925,6 +2949,12 @@ function applyStrings(){
   if(usl){ var sp=document.getElementById("c2-split"); usl.innerHTML=S.stateLabel+(sp?" <span id='c2-split' class='c-field-aside'>"+sp.textContent+"</span>":""); }
   // Stage 3
   var s3a=document.getElementById("t-s3-179d-ask"); if(s3a) s3a.textContent=S["s3179dAsk"];
+  var hql=document.getElementById("t-heat-q-lbl"); if(hql) hql.textContent=S.heatQLbl;
+  var hqs=document.getElementById("t-heat-q-sub"); if(hqs) hqs.textContent=S.heatQSub;
+  var hg=document.getElementById("t-heat-gas"); if(hg) hg.textContent=S.heatOptGas;
+  var hhp=document.getElementById("t-heat-hp"); if(hhp) hhp.textContent=S.heatOptHp;
+  var hr=document.getElementById("t-heat-res"); if(hr) hr.textContent=S.heatOptRes;
+  var hdk=document.getElementById("t-heat-dk"); if(hdk) hdk.textContent=S.heatOptDk;
   var s3b=document.getElementById("t-s3-back"); if(s3b) s3b.textContent=S.s3Back;
   var cb2=document.getElementById("t-calculate-btn"); if(cb2) cb2.childNodes[0]&&(cb2.childNodes[0].textContent=S.calculateBtn);
   // Result
@@ -3201,6 +3231,19 @@ function toggleStream(which){
   render();
 }
 function setHeatComp(c){ state.heatComp=c; document.querySelectorAll(".hc-btns button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-comp")===c); }); render(); }
+// Stage 3 "how do you heat today?" — sets the heating baseline. "I'm not sure" stays conservative
+// (heatpump baseline, heating savings off) so it does not inflate the estimate.
+function setHeating(type){
+  state.heatChoice=type;
+  if(type==='gas'){ state.heatComp='gas'; state.tHeat=false; state.hasElecHeat=false; }
+  else if(type==='heatpump'){ state.heatComp='heatpump'; state.tHeat=true; state.hasElecHeat=true; }
+  else if(type==='resistance'){ state.heatComp='resistance'; state.tHeat=true; state.hasElecHeat=true; }
+  else { state.heatComp='heatpump'; state.tHeat=false; state.hasElecHeat=false; } // dontknow → conservative neutral
+  document.querySelectorAll('#heat-q-chips .fc-chip').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-heat')===type); });
+  document.querySelectorAll('.hc-btns button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-comp')===state.heatComp); });
+  var hs=document.getElementById('ss-heat'); if(hs) hs.style.display=state.tHeat?'':'none';
+  render();
+}
 function setDemBattery(on){
   state.demBattery=on;
   document.querySelectorAll(".dem-btns button").forEach(function(b){
