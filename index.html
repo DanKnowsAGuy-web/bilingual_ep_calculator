@@ -1071,8 +1071,12 @@ body{font-size:17px;}
 .guarantee-tooltip.visible{opacity:1;pointer-events:auto;}
 .guarantee-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:rgba(200,169,110,0.35);}
 @media(max-width:560px){
-  .guarantee-tooltip{white-space:normal;width:240px;left:auto;right:-8px;transform:none;}
-  .guarantee-tooltip::after{left:auto;right:16px;transform:none;}
+  /* Flow the tooltip in normal layout (transformed ancestors trap position:fixed),
+     so it is always fully on-screen and readable. */
+  .guarantee-wrap{display:block;margin-top:6px;}
+  .guarantee-tooltip{position:static;display:none;width:auto;max-width:100%;white-space:normal;transform:none;left:auto;right:auto;bottom:auto;margin-top:8px;opacity:1;pointer-events:auto;}
+  .guarantee-tooltip.visible{display:block;}
+  .guarantee-tooltip::after{display:none;}
 }
 /* ── STAGE 0 HERO ── */
 .s0-title{font-family:'Playfair Display',serif;font-weight:800;font-size:clamp(26px,5vw,38px);line-height:1.1;letter-spacing:-0.02em;color:#fff;margin-bottom:10px;}
@@ -2114,8 +2118,8 @@ var state = {
   demRate:12, demPortion:0.40, demRed:0.05, demBattery:false,
   // Mexico-specific
   mxRegion:"", mxTariff:"GDMTH", mxPFActive:true, mxPFShare:0.08, mxFxRate:17.50,
-  // Facility count / portfolio
-  count:0, countKey:"", countLabel:"", resultSummary:null
+  // Facility count / portfolio — defaults to a single facility
+  count:1, countKey:"one", countLabel:"", resultSummary:null
 };
 
 // ── EQUIPMENT-ONLY CTA CONFIG ──
@@ -2919,7 +2923,7 @@ function applyStrings(){
     updateClaimS2();
     if(state.view==="s3"||state.view==="result") updateClaimS3();
   }
-  if(state.view==="result"){ render(); }
+  if(state.view==="result"){ setResultTitleFinal(); render(); }
   var mxttl=document.getElementById("t-mx-tariff-top-lbl"); if(mxttl) mxttl.textContent=S.mxTariffTopLabel||S.mxTariffLabel;
   // Adjust panel rate-row labels
   var ll=[["t-lbl-harmo","lblHarmo"],["t-lbl-hvac","lblHvac"],["t-lbl-cool","lblCool"],
@@ -3232,6 +3236,22 @@ function typeWriter(el,line1,line2){
     }
   }
   tick();
+}
+
+// Set the result headline to its final translated state (no re-animation) — used on language switch.
+function setResultTitleFinal(){
+  var ctt=document.getElementById("calc-title"); if(!ctt) return;
+  var ins=state.selected&&INSIGHTS[state.selected]?INSIGHTS[state.selected]:null;
+  var noun=ins?ins.noun.charAt(0).toUpperCase()+ins.noun.slice(1):"Your facility";
+  var fn=(STRINGS[state.lang].twLine1||STRINGS.en.twLine1);
+  var line1=fn(noun, state.selected||"");
+  var line2=(STRINGS[state.lang].twLine2||STRINGS.en.twLine2);
+  _twRunning=false; ctt.onclick=null;
+  ctt.innerHTML='';
+  var sp=document.createElement('span'); sp.textContent=line1; ctt.appendChild(sp);
+  ctt.appendChild(document.createElement('br'));
+  var em=document.createElement('em'); em.textContent=line2; em.style.display='block'; em.style.marginTop='4px'; ctt.appendChild(em);
+  ctt.style.display='';
 }
 
 /* ── AMBIENT SPARKS ────────────────────────────────────────────────────── */
@@ -3596,6 +3616,7 @@ function renderFacCounts(){
     btn.className='fc-chip'+(state.countKey===fc.key?' active':'');
     btn.type='button';
     btn.textContent=S[fc.t]||fc.key;
+    if(state.countKey===fc.key) state.countLabel=S[fc.t]||fc.key; // keep label synced to language
     btn.addEventListener('click',function(){ selectFacCount(fc); });
     g.appendChild(btn);
   });
