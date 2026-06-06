@@ -2205,7 +2205,19 @@ function compute(){
   var coolFloor = state.tCool ? C * COOL_FLOOR : 0;
   var coolCeil  = state.tCool ? C * COOL_CEIL  : 0;
   var heatRate  = (state.heatComp==="resistance") ? HEAT.resistance : HEAT.heatpump;
-  var heatCeil  = state.tHeat ? He * heatRate : 0;
+  // Heating savings. When the heating type is unknown ("I'm not sure"), bracket the range:
+  // floor assumes an efficient COP-3 heat pump (least to gain), ceil assumes electric resistance
+  // (most to gain). He already scales with the region's heating share, so this is region-weighted.
+  var heatFloor = 0;
+  var heatCeil  = 0;
+  if(state.tHeat){
+    if(state.heatChoice==='dontknow'){
+      heatFloor = He * HEAT.heatpump;    // COP-3 heat-pump baseline (conservative)
+      heatCeil  = He * HEAT.resistance;  // electric-resistance baseline (optimistic)
+    } else {
+      heatCeil  = He * heatRate;         // known electric heat: existing "up to" treatment
+    }
+  }
   var demFloor  = state.tDem ? state.demRed * state.demPortion * state.spend : 0;
   var demCeil   = state.tDem ? (state.demBattery ? state.demPortion * state.spend : demFloor) : 0;
   var od = state.selected && OUTDOOR[state.selected] ? OUTDOOR[state.selected] : {f:0,c:0};
@@ -2222,12 +2234,12 @@ function compute(){
   var combDemFloor = demFloor + motFloor;
   var pfFloor = (state.country==="mx"&&state.mxPFActive) ? state.mxPFShare * state.spend * 0.60 : 0;
   var pfCeil  = (state.country==="mx"&&state.mxPFActive) ? state.mxPFShare * state.spend * 0.90 : 0;
-  return {harmo:harmo,coolFloor:coolFloor,coolCeil:coolCeil,heatCeil:heatCeil,
+  return {harmo:harmo,coolFloor:coolFloor,coolCeil:coolCeil,heatFloor:heatFloor,heatCeil:heatCeil,
     demFloor:demFloor,demCeil:demCeil,motFloor:motFloor,motCeil:motCeil,
     litFloor:litFloor,litCeil:litCeil,
     negoFloor:negoFloor,negoCeil:negoCeil,
     pfFloor:pfFloor,pfCeil:pfCeil,
-    floor:negoFloor+harmo+coolFloor+combDemFloor+litFloor+pfFloor,
+    floor:negoFloor+harmo+coolFloor+combDemFloor+litFloor+pfFloor+heatFloor,
     ceil:negoCeil+harmo+coolCeil+heatCeil+combDemCeil+litCeil+pfCeil};
 }
 
@@ -2269,6 +2281,7 @@ function render(){
   document.getElementById("v-cool").textContent = state.tCool ? (fmtFull(r.coolFloor) + " to " + fmtFull(r.coolCeil)) : "off";
   if(!state.tHeat){ document.getElementById("v-heat").textContent = STRINGS[state.lang].heatOff||"off"; }
   else if(state.heatComp==="gas"){ document.getElementById("v-heat").textContent = STRINGS[state.lang].heatGas||"$0 · on gas meter"; }
+  else if(state.heatChoice==="dontknow"){ document.getElementById("v-heat").textContent = fmtFull(r.heatFloor) + " to " + fmtFull(r.heatCeil); }
   else { document.getElementById("v-heat").textContent = (STRINGS[state.lang].heatUpTo||"up to ") + fmtFull(r.heatCeil); }
   if(!state.tDem){
     document.getElementById("v-dem").textContent = "off";
